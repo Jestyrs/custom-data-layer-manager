@@ -18,21 +18,54 @@
     };
 
     // 2. Turbine/Adobe Mock
+    // Asset type definition for reuse
+    const assetsType = { type: 'array', items: { type: 'object', properties: { name: { type: 'string' }, value: { type: 'string' } } } };
+
     const defaultSchema = {
         type: 'object',
         properties: {
-            page: { type: 'object', properties: { view_name: { type: 'string' }, url: { type: 'string' } } },
+            page: {
+                type: 'object',
+                properties: {
+                    view_name: { type: 'string' },
+                    url: { type: 'string' },
+                    assets: assetsType
+                }
+            },
             application: {
                 type: 'object',
                 properties: {
                     touchpoint: { type: 'string' },
                     kpi: { type: 'string' },
-                    assets: { type: 'array', items: { type: 'object', properties: { name: { type: 'string' }, value: { type: 'string' } } } }
+                    assets: assetsType
                 }
             },
-            user: { type: 'object', properties: { id: { type: 'string' }, isLoggedIn: { type: 'boolean' } } },
+            user: {
+                type: 'object',
+                properties: {
+                    id: { type: 'string' },
+                    isLoggedIn: { type: 'boolean' },
+                    assets: assetsType
+                }
+            },
             event: { type: 'object', properties: { action: { type: 'string' } } },
-            search: { type: 'object', properties: { term: { type: 'string' }, results_count: { type: 'number' }, result_position: { type: 'number' } } }
+            search: {
+                type: 'object',
+                properties: {
+                    term: { type: 'string' },
+                    results_count: { type: 'number' },
+                    result_position: { type: 'number' },
+                    assets: assetsType
+                }
+            },
+            form: {
+                type: 'object',
+                properties: {
+                    name: { type: 'string' },
+                    step: { type: 'string' },
+                    assets: assetsType
+                }
+            }
         }
     };
 
