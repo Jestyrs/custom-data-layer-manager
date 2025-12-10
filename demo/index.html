@@ -415,8 +415,6 @@
 
         if (!useRealAdobe) {
             // MOCK MODE: Load mock environment and local extension source files
-            document.write('<script src="mock-environment.js"><\/script>');
-
             // Loader Helper
             window.utilsModule = null;
             window.dataLayerModule = null;
@@ -428,37 +426,17 @@
                 }
                 return {};
             };
-        }
-    </script>
 
-    <!-- Conditionally load source files in mock mode -->
-    <script>
-        if (!localStorage.getItem('useRealAdobe') || localStorage.getItem('useRealAdobe') !== 'true') {
-            // Load Utils
-            const utilsScript = document.createElement('script');
-            utilsScript.src = '../src/lib/utils.js';
-            utilsScript.onload = function () {
-                window.utilsModule = window.module.exports;
-                window.module.exports = {}; // Reset for next file
-
-                // Load Data Layer Manager after utils
-                const dlScript = document.createElement('script');
-                dlScript.src = '../src/lib/dataLayerManager.js';
-                dlScript.onload = function () {
-                    // Load App Logic after data layer manager
-                    const appScript = document.createElement('script');
-                    appScript.src = 'app.js';
-                    document.head.appendChild(appScript);
-                };
-                document.head.appendChild(dlScript);
-            };
-            document.head.appendChild(utilsScript);
+            // Use document.write for synchronous loading
+            document.write('<script src="mock-environment.js"><\/script>');
+            document.write('<script src="../src/lib/utils.js"><\/script>');
+            document.write('<script>window.utilsModule = window.module.exports; window.module.exports = {};<\/script>');
+            document.write('<script src="../src/lib/dataLayerManager.js"><\/script>');
+            document.write('<script src="app.js"><\/script>');
         } else {
             // REAL ADOBE MODE: Just load app.js - extension provides the data layer
             console.log('[Demo] Real Adobe Launch mode - using extension-provided data layer object.');
-            const appScript = document.createElement('script');
-            appScript.src = 'app.js';
-            document.head.appendChild(appScript);
+            document.write('<script src="app.js"><\/script>');
         }
     </script>
 
