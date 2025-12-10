@@ -172,22 +172,11 @@ function initializeDataLayer() {
 
                 const assetPath = `${path}.assets`;
 
-                // Get existing assets, with robust fallback to empty array
                 let currentAssets = this.get(assetPath);
-
-                // Ensure currentAssets is always a valid array
-                if (!currentAssets || !Array.isArray(currentAssets)) {
+                if (!Array.isArray(currentAssets)) {
                     currentAssets = [];
                 }
-
-                // Build map from existing assets, filtering for valid objects with name/value
-                const assetMap = new Map();
-                for (let i = 0; i < currentAssets.length; i++) {
-                    const asset = currentAssets[i];
-                    if (asset && typeof asset === 'object' && asset.name !== undefined) {
-                        assetMap.set(asset.name, asset.value);
-                    }
-                }
+                const assetMap = new Map(currentAssets.map(asset => [asset.name, asset.value]));
 
                 // Add/update with new assets
                 for (const name in assetsObject) {
