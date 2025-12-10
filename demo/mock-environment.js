@@ -7,15 +7,22 @@
     console.log('[MockEnv] Initializing Adobe Launch Simulation...');
 
     // 1. Module System Mock (for CommonJS compatibility in browser)
-    window.module = {};
-    window.exports = {};
-    window.require = function (path) {
-        // Resolve './utils' to the global utils object we will load
-        if (path === './utils') {
-            return window.utilsModule;
-        }
-        return {};
-    };
+    // Only set up if not already defined (may be set up by index.html)
+    if (!window.module) {
+        window.module = {};
+    }
+    if (!window.exports) {
+        window.exports = {};
+    }
+    if (!window.require) {
+        window.require = function (path) {
+            // Resolve './utils' to the global utils object we will load
+            if (path === './utils') {
+                return window.utilsModule;
+            }
+            return {};
+        };
+    }
 
     // 2. Turbine/Adobe Mock
     // Asset type definition for reuse
