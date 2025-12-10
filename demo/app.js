@@ -3,8 +3,26 @@
  */
 
 const app = {
+    // Current data object name (customizable)
+    dataObjectName: localStorage.getItem('dataObjectName') || 'digitalData',
+
+    // Helper to get the current data layer object
+    getDataLayer: function () {
+        return window[this.dataObjectName];
+    },
+
     init: function () {
         console.log('[App] Initializing Demo...');
+
+        // Initialize data object name input and label
+        const dataObjectInput = document.getElementById('data-object-name');
+        const dataObjectLabel = document.getElementById('data-object-label');
+        if (dataObjectInput) {
+            dataObjectInput.value = this.dataObjectName;
+        }
+        if (dataObjectLabel) {
+            dataObjectLabel.textContent = 'window.' + this.dataObjectName;
+        }
 
         // 1. Simulate Server-Side Page Load (via Query Params)
         const urlParams = new URLSearchParams(window.location.search);
@@ -14,9 +32,10 @@ const app = {
         // In a real scenario, dataLayerManager initializes from schema values (empty strings).
         // Then we set the page name based on the "server" context.
 
-        if (window.digitalData) {
-            window.digitalData.set('page.view_name', 'standard:' + pageParam);
-            window.digitalData.set('page.url', window.location.href);
+        const dl = this.getDataLayer();
+        if (dl) {
+            dl.set('page.view_name', 'standard:' + pageParam);
+            dl.set('page.url', window.location.href);
 
             this.log(`[App] Standard Page Load Detected: "${pageParam}"`, 'event');
 
@@ -38,7 +57,8 @@ const app = {
             const trackable = e.target.closest('[analytics-id]');
             if (trackable) {
                 const id = trackable.getAttribute('analytics-id');
-                window.digitalData.set('event.action', id);
+                const dl = app.getDataLayer();
+                if (dl) dl.set('event.action', id);
                 app.log(`[Analytics] Click tracked: ${id}`, 'event');
             }
         });
@@ -49,8 +69,10 @@ const app = {
         doGet: function () {
             const path = document.getElementById('get-path').value;
             if (!path) return;
+            const dl = app.getDataLayer();
+            if (!dl) { app.log('[Error] Data layer not found.', 'error'); return; }
             try {
-                const val = window.digitalData.get(path);
+                const val = dl.get(path);
                 const displayVal = (typeof val === 'object') ? JSON.stringify(val) : String(val);
                 document.getElementById('get-result').textContent = `Result: ${displayVal}`;
                 app.log(`[Action] .get('${path}') -> ${typeof val}`, 'log');
@@ -63,9 +85,11 @@ const app = {
             const path = document.getElementById('set-path').value;
             const val = document.getElementById('set-value').value;
             if (!path) return;
+            const dl = app.getDataLayer();
+            if (!dl) { app.log('[Error] Data layer not found.', 'error'); return; }
 
             // Allow attempting to set empty string to test validation
-            const result = window.digitalData.set(path, val);
+            const result = dl.set(path, val);
             if (!result) {
                 app.log(`[Error] .set('${path}', '${val}') failed. Check console.`, 'error');
             } else {
@@ -76,10 +100,12 @@ const app = {
         doMerge: function () {
             const path = document.getElementById('merge-path').value;
             const jsonStr = document.getElementById('merge-json').value;
+            const dl = app.getDataLayer();
+            if (!dl) { app.log('[Error] Data layer not found.', 'error'); return; }
             try {
                 const jsonObj = JSON.parse(jsonStr);
                 // Handle optional path for merge logic
-                const result = window.digitalData.merge(path, jsonObj);
+                const result = dl.merge(path, jsonObj);
                 app.log(`[Action] .merge('${path}', ...) -> ${result}`, 'log');
             } catch (e) {
                 app.log(`[Error] Invalid JSON or Merge Failed: ${e.message}`, 'error');
@@ -90,15 +116,19 @@ const app = {
             const name = document.getElementById('view-name').value;
             const tp = document.getElementById('view-touchpoint').value;
             if (!name) return;
+            const dl = app.getDataLayer();
+            if (!dl) { app.log('[Error] Data layer not found.', 'error'); return; }
 
-            const result = window.digitalData.setView(name, tp);
+            const result = dl.setView(name, tp);
             app.log(`[Action] .setView('${name}', '${tp}') -> ${result}`, 'log');
         },
 
         doSetKPI: function () {
             const name = document.getElementById('kpi-name').value;
             if (!name) return;
-            const result = window.digitalData.setKPI(name);
+            const dl = app.getDataLayer();
+            if (!dl) { app.log('[Error] Data layer not found.', 'error'); return; }
+            const result = dl.setKPI(name);
             app.log(`[Action] .setKPI('${name}') -> ${result}`, 'log');
         },
 
@@ -108,22 +138,28 @@ const app = {
             const val = document.getElementById('asset-val').value;
 
             if (!path || !key) return;
+            const dl = app.getDataLayer();
+            if (!dl) { app.log('[Error] Data layer not found.', 'error'); return; }
 
             const assetsObj = {};
             assetsObj[key] = val;
 
-            const result = window.digitalData.setAssets(path, assetsObj);
+            const result = dl.setAssets(path, assetsObj);
             app.log(`[Action] setAssets('${path}', ${JSON.stringify(assetsObj)}) -> ${result}`, 'log');
         },
 
         doSetTouchpoint: function () {
             const val = document.getElementById('touchpoint-val').value;
-            const result = window.digitalData.setTouchpoint(val);
+            const dl = app.getDataLayer();
+            if (!dl) { app.log('[Error] Data layer not found.', 'error'); return; }
+            const result = dl.setTouchpoint(val);
             app.log(`[Action] setTouchpoint('${val}') -> ${result}`, result ? 'log' : 'error');
         },
 
         doClearTouchpoint: function () {
-            const result = window.digitalData.clearTouchpoint();
+            const dl = app.getDataLayer();
+            if (!dl) { app.log('[Error] Data layer not found.', 'error'); return; }
+            const result = dl.clearTouchpoint();
             app.log(`[Action] clearTouchpoint() -> ${result}`, 'log');
         },
     },
@@ -132,23 +168,26 @@ const app = {
     simulateAction: function (type) {
         app.log(`[User Action] Clicked "${type}"`, 'event');
 
+        const dl = this.getDataLayer();
+        if (!dl) { app.log('[Error] Data layer not found.', 'error'); return; }
+
         switch (type) {
             case 'pay-bill':
                 // Simulate flow: Nav to billing, set touchpoint
-                window.digitalData.setView('billing-center');
-                window.digitalData.setTouchpoint('financial');
-                window.digitalData.setKPI('initiate_payment');
+                dl.setView('billing-center');
+                dl.setTouchpoint('financial');
+                dl.setKPI('initiate_payment');
                 app.log(`[Flow] Navigate -> Billing | Touchpoint -> Financial`, 'log');
                 break;
 
             case 'find-doc':
-                window.digitalData.setView('provider-search');
-                window.digitalData.setTouchpoint('care_access');
+                dl.setView('provider-search');
+                dl.setTouchpoint('care_access');
                 break;
 
             case 'view-claims':
-                window.digitalData.setView('claims-history');
-                window.digitalData.setTouchpoint('financial');
+                dl.setView('claims-history');
+                dl.setTouchpoint('financial');
                 break;
 
             case 'update-profile':
@@ -160,8 +199,8 @@ const app = {
                 // But we can simulate capturing it via individual sets or setAssets? 
                 // Actually, let's just use .set for the demo as we don't have a verified setForm method in the snippet provided.
                 // Or assume we want to demonstrate capturing data.
-                if (email) window.digitalData.set('user.id', email); // Using ID as proxy
-                window.digitalData.setTouchpoint('account_mgmt');
+                if (email) dl.set('user.id', email); // Using ID as proxy
+                dl.setTouchpoint('account_mgmt');
                 app.log(`[Flow] Profile Updated -> Captured Data`, 'log');
                 break;
 
@@ -172,7 +211,7 @@ const app = {
                     prefs[cb.value] = 'opt-in';
                 });
                 // Store in assets
-                window.digitalData.setAssets('application', prefs);
+                dl.setAssets('application', prefs);
                 app.log(`[Flow] Preferences Saved -> setAssets`, 'log');
                 break;
 
@@ -189,7 +228,7 @@ const app = {
                 }
 
                 // Bulk set assets
-                window.digitalData.setAssets('application', topics);
+                dl.setAssets('application', topics);
                 app.log(`[Flow] Health Interests Saved -> Bulk setAssets for ${Object.keys(topics).length} items`, 'log');
                 break;
         }
@@ -226,15 +265,19 @@ const app = {
         const viewName = viewNameMap[pageId] || 'pubweb:unknown';
 
         // Call setView
-        window.digitalData.setView(viewName, 'public_website');
-        app.log(`[Pubweb] Navigated to ${viewName}`, 'event');
+        const dl = this.getDataLayer();
+        if (dl) {
+            dl.setView(viewName, 'public_website');
+            app.log(`[Pubweb] Navigated to ${viewName}`, 'event');
+        }
     },
 
     openQuoteModal: function () {
         const modal = document.getElementById('quote-modal');
         if (modal) modal.classList.add('active');
         // Analytics
-        window.digitalData.setTouchpoint('quote_modal');
+        const dl = this.getDataLayer();
+        if (dl) dl.setTouchpoint('quote_modal');
         app.log('[App] Opened Quote Modal', 'event');
     },
 
@@ -242,13 +285,17 @@ const app = {
         const modal = document.getElementById('quote-modal');
         if (modal) modal.classList.remove('active');
         // Revert touchpoint or clear? Let's clear
-        window.digitalData.clearTouchpoint();
+        const dl = this.getDataLayer();
+        if (dl) dl.clearTouchpoint();
     },
 
     submitQuote: function () {
         this.closeQuoteModal();
-        window.digitalData.setKPI('start_quote');
-        window.digitalData.setView('pubweb:quote_results');
+        const dl = this.getDataLayer();
+        if (dl) {
+            dl.setKPI('start_quote');
+            dl.setView('pubweb:quote_results');
+        }
         app.log('[App] Quote Started', 'event');
     },
 
@@ -264,9 +311,12 @@ const app = {
         ];
 
         // 1. Set Data Layer for Search Event
-        window.digitalData.set('search.term', term);
-        window.digitalData.set('search.results_count', results.length);
-        window.digitalData.setKPI('search_executed');
+        const dl = this.getDataLayer();
+        if (dl) {
+            dl.set('search.term', term);
+            dl.set('search.results_count', results.length);
+            dl.setKPI('search_executed');
+        }
         app.log(`[Search] Term: "${term}", Results: ${results.length}`, 'event');
 
         // 2. Render Results
@@ -290,12 +340,15 @@ const app = {
 
     trackSearchResultClick: function (pos, total) {
         // Set Data Layer
-        window.digitalData.set('search.result_position', pos);
+        const dl = this.getDataLayer();
+        if (dl) {
+            dl.set('search.result_position', pos);
 
-        // Formatted Action String
-        const val = `search-result-click:${pos}:${total}`;
-        window.digitalData.set('event.action', val);
-        app.log(`[Search] Result Clicked: ${val} (Index: ${pos})`, 'event');
+            // Formatted Action String
+            const val = `search-result-click:${pos}:${total}`;
+            dl.set('event.action', val);
+            app.log(`[Search] Result Clicked: ${val} (Index: ${pos})`, 'event');
+        }
     },
 
     switchTab: function (tabName) {
@@ -320,12 +373,15 @@ const app = {
     simulateRoute: function (viewName) {
         app.log(`[SPA] Navigating to virtual view: ${viewName}...`, 'event');
 
-        // In an SPA, we might clear previous specific data or just set new data.
-        // 1. Set View (Triggers Adobe Rule)
-        window.digitalData.setView('spa:' + viewName);
+        const dl = this.getDataLayer();
+        if (dl) {
+            // In an SPA, we might clear previous specific data or just set new data.
+            // 1. Set View (Triggers Adobe Rule)
+            dl.setView('spa:' + viewName);
 
-        // 2. Clear Touchpoint (demonstrating the new feature)
-        window.digitalData.clearTouchpoint();
+            // 2. Clear Touchpoint (demonstrating the new feature)
+            dl.clearTouchpoint();
+        }
 
         // 3. Update URL (visual only)
         window.history.pushState({}, '', '?page=' + viewName);
@@ -347,9 +403,10 @@ const app = {
 
     renderJSON: function () {
         const container = document.getElementById('json-view');
-        if (!window.digitalData || !container) return;
+        const dl = this.getDataLayer();
+        if (!dl || !container) return;
 
-        const state = window.digitalData._getState();
+        const state = dl._getState();
         container.innerHTML = this.syntaxHighlight(state);
     },
 
@@ -379,10 +436,40 @@ const app = {
     openSchemaEditor: function () {
         const modal = document.getElementById('schema-modal');
         const textarea = document.getElementById('schema-json');
-        if (modal && textarea && window.digitalData && window.digitalData._getSchema) {
-            textarea.value = JSON.stringify(window.digitalData._getSchema(), null, 2);
-            modal.classList.add('active');
+        if (!modal || !textarea) return;
+
+        // Default fallback schema
+        const defaultSchema = {
+            type: 'object',
+            properties: {
+                page: { type: 'object', properties: { view_name: { type: 'string' }, url: { type: 'string' } } },
+                application: {
+                    type: 'object',
+                    properties: {
+                        touchpoint: { type: 'string' },
+                        kpi: { type: 'string' },
+                        assets: { type: 'array', items: { type: 'object', properties: { name: { type: 'string' }, value: { type: 'string' } } } }
+                    }
+                },
+                user: { type: 'object', properties: { id: { type: 'string' }, isLoggedIn: { type: 'boolean' } } },
+                event: { type: 'object', properties: { action: { type: 'string' } } },
+                search: { type: 'object', properties: { term: { type: 'string' }, results_count: { type: 'number' }, result_position: { type: 'number' } } }
+            }
+        };
+
+        // Try to get schema from digitalData, fall back to default
+        let schema = defaultSchema;
+        const dl = this.getDataLayer();
+        if (dl && typeof dl._getSchema === 'function') {
+            try {
+                schema = dl._getSchema();
+            } catch (e) {
+                console.warn('[App] Could not get schema from data layer, using default.');
+            }
         }
+
+        textarea.value = JSON.stringify(schema, null, 2);
+        modal.classList.add('active');
     },
 
     closeSchemaEditor: function () {
@@ -415,6 +502,24 @@ const app = {
         } else {
             app.log('[App] Switching to Emulated Adobe Mode. Page will reload...', 'event');
         }
+        setTimeout(() => window.location.reload(), 500);
+    },
+
+    // Apply custom data object name
+    applyDataObjectName: function () {
+        const input = document.getElementById('data-object-name');
+        if (!input) return;
+
+        const newName = input.value.trim();
+
+        // Validate: must be a valid JS identifier
+        if (!newName || !/^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(newName)) {
+            app.log('[Error] Invalid data object name. Must be a valid JavaScript identifier.', 'error');
+            return;
+        }
+
+        localStorage.setItem('dataObjectName', newName);
+        app.log(`[App] Data object name changed to "${newName}". Reloading...`, 'event');
         setTimeout(() => window.location.reload(), 500);
     }
 };

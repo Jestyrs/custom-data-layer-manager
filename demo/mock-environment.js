@@ -36,12 +36,15 @@
         }
     };
 
+    // Get custom data object name from localStorage (default: digitalData)
+    const customDataObjectName = localStorage.getItem('dataObjectName') || 'digitalData';
+
     window.turbine = {
         getExtensionSettings: function () {
             // Use custom schema if provided
             const schema = window._customSchema || defaultSchema;
             return {
-                dataObjectName: 'digitalData',
+                dataObjectName: customDataObjectName,
                 tenantPropertyName: 'testTenant',
                 initialSchemaJson: JSON.stringify(schema)
             };
@@ -59,15 +62,16 @@
     };
 
     // 3. Adobe Event Listener Mock (Rules Engine)
-    // We proxy the window.digitalData object *after* it is created to watch for changes.
-    // Since we can't easily proxy the assignment to window.digitalData itself from here (timing),
+    // We proxy the data layer object *after* it is created to watch for changes.
+    // Since we can't easily proxy the assignment itself from here (timing),
     // we will rely on a poller or a wrapper in the app.js to detect changes for the demo.
     // However, for best realism, let's wrap the set method if we can.
 
-    // We will wait for digitalData to exist to wrap it.
+    // We will wait for the data layer to exist to wrap it.
     const waitForDL = setInterval(() => {
-        if (window.digitalData) {
-            console.log('[MockEnv] digitalData detected.');
+        const dl = window[customDataObjectName];
+        if (dl) {
+            console.log(`[MockEnv] ${customDataObjectName} detected.`);
 
             // If Real Adobe mode (from localStorage), skip mock wrappers
             const useRealAdobe = localStorage.getItem('useRealAdobe') === 'true';
@@ -81,11 +85,11 @@
             console.log('[MockEnv] Setting up mock Event Listeners...');
 
             // Wrap setters to detect events
-            const originalSet = window.digitalData.set;
-            const originalSetView = window.digitalData.setView;
+            const originalSet = dl.set;
+            const originalSetView = dl.setView;
 
             // Proxy setView -> "Direct Call Rule: View Change"
-            window.digitalData.setView = function (name, touchpoint) {
+            dl.setView = function (name, touchpoint) {
                 const result = originalSetView.apply(this, arguments);
                 if (result) {
                     if (window.logToUI) window.logToUI(`[Adobe Rule] Triggered: "View Change" (Page Name: ${name})`, 'event');
@@ -95,7 +99,7 @@
             };
 
             // Proxy generic set -> Watch for specific keys if needed
-            window.digitalData.set = function (path, value) {
+            dl.set = function (path, value) {
                 const result = originalSet.apply(this, arguments);
                 if (result) {
                     // Detect Page View change via raw set
@@ -110,9 +114,9 @@
             // Wrap other methods that change state for visualization updates
             const methods = ['setAssets', 'clearTouchpoint', 'setKPI', 'setTouchpoint'];
             methods.forEach(m => {
-                if (window.digitalData[m]) {
-                    const orig = window.digitalData[m];
-                    window.digitalData[m] = function () {
+                if (dl[m]) {
+                    const orig = dl[m];
+                    dl[m] = function () {
                         const res = orig.apply(this, arguments);
                         updateVisualizer();
                         return res;
@@ -120,6 +124,7 @@
                 }
             });
 
+            clearInterval(waitForDL);
             updateVisualizer(); // Initial state
         }
     }, 100);
