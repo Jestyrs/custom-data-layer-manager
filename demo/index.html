@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Layer Manager Demo | Blue Cross NC Style</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <header>
+        <div class="logo">
+            <!-- Simple accessible logo representation -->
+            <span style="color:#0072CE">BlueCross</span><span style="color:#0072CE">NC</span>
+            <span style="font-weight:400; font-size: 0.8em; color: #666; margin-left: 10px;">| Data Layer Demo</span>
+        </div>
+        <nav class="nav-links">
+            <!-- Simulated "Server Side" Navigation -->
+            <a href="?page=home" id="nav-home">Home</a>
+            <a href="?page=plans" id="nav-plans">Plans</a>
+            <a href="?page=find-doctor" id="nav-find-doctor">Find a Doctor</a>
+
+            <span style="border-left: 1px solid #ccc; margin: 0 10px;"></span>
+
+            <!-- Simulated SPA Navigation -->
+            <button class="spa-btn" onclick="app.simulateRoute('member-portal')">SPA: Portal</button>
+            <button class="spa-btn" onclick="app.simulateRoute('claims-center')">SPA: Claims</button>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Left Column: Interactive Area -->
+        <div class="simulation-container">
+
+            <!-- Tab Navigation -->
+            <div class="tab-nav">
+                <button class="tab-btn active" onclick="app.switchTab('dashboard')">Member Dashboard</button>
+                <button class="tab-btn" onclick="app.switchTab('pubweb')">Pubweb (Blue Cross NC)</button>
+                <button class="tab-btn" onclick="app.switchTab('playground')">Dev Playground</button>
+            </div>
+
+            <!-- Tab 3: Pubweb Emulation -->
+            <div id="pubweb-tab" class="tab-content"
+                style="background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border: 1px solid #e0e0e0;">
+
+                <!-- Pubweb Header/Nav -->
+                <div class="pubweb-header">
+                    <div class="pubweb-nav-row">
+                        <div class="pubweb-nav-item active" onclick="app.pubwebWaitAndGo('home')"
+                            analytics-id="nav-home">Home</div>
+                        <div class="pubweb-nav-item" onclick="app.pubwebWaitAndGo('shop')" analytics-id="nav-shop">Shop
+                            for Plans</div>
+                        <div class="pubweb-nav-item" onclick="app.pubwebWaitAndGo('manage')" analytics-id="nav-manage">
+                            Manage Your Plan</div>
+                        <div class="pubweb-nav-item" onclick="app.pubwebWaitAndGo('find-care')"
+                            analytics-id="nav-find-care">Find Care</div>
+                        <div class="pubweb-nav-item" onclick="app.pubwebWaitAndGo('about')" analytics-id="nav-about">
+                            About Us</div>
+                    </div>
+                </div>
+
+                <!-- Pubweb Content Pages -->
+                <div id="pubweb-content-area" style="padding: 0;">
+
+                    <!-- Page: Home -->
+                    <div id="pub-page-home" class="pubweb-page active">
+                        <div class="pubweb-hero">
+                            <h1>It’s time to choose your 2026 health plan.</h1>
+                            <p>Shop ACA plans or update your coverage now.</p>
+                            <button class="pubweb-cta" onclick="app.pubwebWaitAndGo('shop')">Shop ACA Plans</button>
+                        </div>
+                        <div class="pubweb-section">
+                            <div class="card" style="border-left: 4px solid var(--brand-blue);">
+                                <h3>Federal premium help is changing</h3>
+                                <p style="font-size: 0.9rem;">Discover how changes to federal subsidies could impact
+                                    your costs.</p>
+                                <a href="#" onclick="app.simulateAction('pubweb-news-1'); return false;">Read More</a>
+                            </div>
+                            <div class="card" style="margin-top: 1rem; border-left: 4px solid var(--success-green);">
+                                <h3>Our commitment to affordability</h3>
+                                <p style="font-size: 0.9rem;">We’re digging deeper to uncover root causes driving costs
+                                    higher.</p>
+                                <a href="#" onclick="app.simulateAction('pubweb-news-2'); return false;">Read More</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Page: Shop Plans -->
+                    <div id="pub-page-shop" class="pubweb-page">
+                        <div class="pubweb-internal-header">
+                            <h2>Shop for Plans</h2>
+                            <p>Find the right coverage for you and your family.</p>
+                        </div>
+                        <div style="padding: 4rem; text-align: center;">
+                            <p style="margin-bottom: 2rem; color: #666;">Ready to see your options? It only takes a few
+                                seconds.</p>
+                            <button class="pubweb-cta" onclick="app.openQuoteModal()"
+                                analytics-id="shop-page-get-quote">Start Quote</button>
+                        </div>
+                    </div>
+
+                    <!-- Page: Manage Plan -->
+                    <div id="pub-page-manage" class="pubweb-page">
+                        <div class="pubweb-internal-header" style="background: #004d8c;">
+                            <h2>Manage Your Plan</h2>
+                            <p style="color: #ddd;">Access your benefits, claims, and ID cards.</p>
+                        </div>
+                        <div style="padding: 2rem; text-align: center;">
+                            <p>Already a member?</p>
+                            <button class="pubweb-cta" onclick="app.switchTab('dashboard')">Login to Blue
+                                Connect</button>
+                        </div>
+                    </div>
+
+                    <!-- Page: Find Care -->
+                    <div id="pub-page-find-care" class="pubweb-page">
+                        <div class="pubweb-internal-header" style="background: var(--success-green);">
+                            <h2>Find Care</h2>
+                            <p>Locate doctors, hospitals, and urgent care centers near you.</p>
+                        </div>
+                        <div style="padding: 2rem;">
+                            <input type="text" id="find-care-input" placeholder="Search by name or specialty..."
+                                style="width: 100%; padding: 12px; margin-bottom: 1rem;">
+                            <button class="pubweb-cta" onclick="app.performSearch()"
+                                analytics-id="find-care-search-btn">Search</button>
+
+                            <!-- Search Results Container -->
+                            <div id="search-results-container" style="margin-top: 2rem;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Page: About -->
+                    <div id="pub-page-about" class="pubweb-page">
+                        <div style="padding: 2rem;">
+                            <h2>About Blue Cross NC</h2>
+                            <p>Our purpose is to improve the health and well-being of our customers and communities. We
+                                won't stop until health care is better for all.</p>
+                        </div>
+                    </div>
+
+                    <!-- Modal: Quote -->
+                    <div id="quote-modal" class="modal-overlay">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h3>Get a Health Insurance Quote</h3>
+                                <button class="modal-close" onclick="app.closeQuoteModal()">×</button>
+                            </div>
+                            <div class="modal-body">
+                                <label style="display:block; margin-bottom:5px;">Zip Code</label>
+                                <input type="text" id="quote-zip" placeholder="Enter Zip Code" value="27701"
+                                    style="width:100%; padding:8px; margin-bottom:15px; box-sizing:border-box;">
+
+                                <label style="display:block; margin-bottom:5px;">County</label>
+                                <select style="width:100%; padding:8px; margin-bottom:20px;">
+                                    <option>Durham</option>
+                                    <option>Wake</option>
+                                    <option>Orange</option>
+                                </select>
+
+                                <button class="pubweb-cta" style="width:100%;" onclick="app.submitQuote()"
+                                    analytics-id="modal-view-plans">View Plans</button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Tab 1: Realistic Member Dashboard -->
+            <div id="dashboard-tab" class="tab-content active">
+
+                <div class="welcome-banner">
+                    <h1>Good Afternoon, John</h1>
+                    <p>Member ID: XJ92839281 | Plan: Blue Advantage Gold</p>
+                </div>
+
+                <div class="dashboard-grid">
+                    <!-- Section: Quick Actions -->
+                    <div class="card">
+                        <h2>Quick Actions</h2>
+                        <div class="action-grid">
+                            <div class="quick-action-card" onclick="app.handlers.simulateAction('pay-bill')">
+                                💰 Pay Premium
+                            </div>
+                            <div class="quick-action-card" onclick="app.handlers.simulateAction('find-doc')">
+                                👨‍⚕️ Find Doctor
+                            </div>
+                            <div class="quick-action-card" onclick="app.handlers.simulateAction('view-claims')">
+                                📄 View Claims
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section: Profile & Contact -->
+                    <div class="card">
+                        <h2>Update Profile</h2>
+                        <input type="text" id="dash-email" placeholder="Email Address"
+                            style="margin-bottom:10px; width: 100%; box-sizing:border-box;">
+                        <input type="text" id="dash-phone" placeholder="Phone Number"
+                            style="margin-bottom:10px; width: 100%; box-sizing:border-box;">
+                        <button class="action-btn" onclick="app.handlers.simulateAction('update-profile')">Save
+                            Changes</button>
+                    </div>
+
+                    <!-- Section: Contact Preferences -->
+                    <div class="card">
+                        <h2>Contact Preferences</h2>
+                        <p style="font-size:0.9rem; color:#666; margin-bottom:1rem;">How should we contact you?</p>
+                        <div class="form-section">
+                            <div class="matrix-grid">
+                                <label class="checkbox-card">
+                                    <input type="checkbox" name="pref" value="email" checked> Email
+                                </label>
+                                <label class="checkbox-card">
+                                    <input type="checkbox" name="pref" value="sms"> SMS / Text
+                                </label>
+                                <label class="checkbox-card">
+                                    <input type="checkbox" name="pref" value="mail"> Paper Mail
+                                </label>
+                                <label class="checkbox-card">
+                                    <input type="checkbox" name="pref" value="push"> App Push
+                                </label>
+                            </div>
+                        </div>
+                        <button class="action-btn" onclick="app.handlers.simulateAction('save-prefs')">Update
+                            Preferences</button>
+                    </div>
+
+                    <!-- Section: Health Interests (Asset Matrix) -->
+                    <div class="card" style="grid-column: 1 / -1;">
+                        <h2>Personalize Your Health Feed</h2>
+                        <p style="font-size:0.9rem; color:#666;">Select topics to follow (Tests `setAssets` with
+                            arrays):</p>
+
+                        <div class="matrix-grid" style="grid-template-columns: repeat(3, 1fr);">
+                            <label class="checkbox-card"><input type="checkbox" name="topic" value="fitness"> Fitness &
+                                Exercise</label>
+                            <label class="checkbox-card"><input type="checkbox" name="topic" value="nutrition">
+                                Nutrition & Diet</label>
+                            <label class="checkbox-card"><input type="checkbox" name="topic" value="mental"> Mental
+                                Health</label>
+                            <label class="checkbox-card"><input type="checkbox" name="topic" value="prevention">
+                                Preventive Care</label>
+                            <label class="checkbox-card"><input type="checkbox" name="topic" value="diabetes"> Diabetes
+                                Mgmt</label>
+                            <label class="checkbox-card"><input type="checkbox" name="topic" value="heart"> Heart
+                                Health</label>
+                        </div>
+
+                        <div style="margin-top:1rem; text-align:right;">
+                            <button class="action-btn" onclick="app.handlers.simulateAction('save-topics')">Save
+                                Interests</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 2: Dev Playground (Existing Controls) -->
+            <div id="playground-tab" class="tab-content">
+                <div class="card controls-panel">
+                    <h2>Manual Data Layer Controls</h2>
+                    <p style="color:#666; margin-bottom:1.5rem;">Directly manipulate the data layer to test specific
+                        edge cases.</p>
+
+                    <!-- .get() -->
+                    <div class="control-group">
+                        <label>Get Value (.get)</label>
+                        <div class="input-row">
+                            <input type="text" id="get-path" placeholder="Path (e.g. user.id)">
+                            <button class="action-btn secondary" onclick="app.handlers.doGet()">Get</button>
+                        </div>
+                        <div id="get-result"
+                            style="margin-top:5px; font-family:monospace; color:#333; font-size:0.9rem; background:#f4f4f4; padding:5px; border-radius:4px; min-height:24px;">
+                        </div>
+                    </div>
+
+                    <!-- .set() -->
+                    <div class="control-group">
+                        <label>Generic Set (.set)</label>
+                        <div class="input-row">
+                            <input type="text" id="set-path" placeholder="Path (e.g. user.id)">
+                            <input type="text" id="set-value" placeholder="Value (e.g. 12345)">
+                            <button class="action-btn" onclick="app.handlers.doSet()">Set</button>
+                        </div>
+                        <small style="color: #666;">Note: Objects/Arrays are blocked by strict validation.</small>
+                    </div>
+
+                    <!-- .merge() -->
+                    <div class="control-group">
+                        <label>Merge Object (.merge)</label>
+                        <input type="text" id="merge-path" placeholder="Path (e.g. user) or empty for root"
+                            style="margin-bottom:5px; margin-top:5px; width:100%; box-sizing:border-box;">
+                        <textarea id="merge-json" placeholder='{ "id": "123", "isLoggedIn": true }'
+                            style="width:100%; height:80px; font-family:monospace; border:1px solid #ccc; border-radius:4px; padding:5px; box-sizing:border-box;"></textarea>
+                        <div style="margin-top:5px; text-align:right;">
+                            <button class="action-btn" onclick="app.handlers.doMerge()">Merge JSON</button>
+                        </div>
+                    </div>
+
+                    <!-- .setView() -->
+                    <div class="control-group">
+                        <label>Set Page View (.setView)</label>
+                        <div class="input-row">
+                            <input type="text" id="view-name" placeholder="View Name (e.g. home)">
+                            <input type="text" id="view-touchpoint" placeholder="Touchpoint (Optional)">
+                            <button class="action-btn" onclick="app.handlers.doSetView()">Set View</button>
+                        </div>
+                    </div>
+
+                    <!-- .setKPI() -->
+                    <div class="control-group">
+                        <label>Set KPI (.setKPI)</label>
+                        <div class="input-row">
+                            <input type="text" id="kpi-name" placeholder="KPI Name (e.g. purchase_complete)">
+                            <button class="action-btn" onclick="app.handlers.doSetKPI()">Trigger KPI</button>
+                        </div>
+                    </div>
+
+                    <!-- setAssets() -->
+                    <div class="control-group">
+                        <label>Set Assets (setAssets)</label>
+                        <div class="input-row">
+                            <input type="text" id="asset-path" value="application" placeholder="Parent Path">
+                            <input type="text" id="asset-key" placeholder="Name">
+                            <input type="text" id="asset-val" placeholder="Value">
+                            <button class="action-btn" onclick="app.handlers.doSetAssets()">Add Asset</button>
+                        </div>
+                    </div>
+
+                    <!-- Touchpoint Controls -->
+                    <div class="control-group">
+                        <label>Touchpoint Management</label>
+                        <div class="input-row">
+                            <input type="text" id="touchpoint-val" placeholder="Touchpoint Name">
+                            <button class="action-btn" onclick="app.handlers.doSetTouchpoint()">Set</button>
+                            <button class="action-btn secondary"
+                                onclick="app.handlers.doClearTouchpoint()">Clear</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Visualizer -->
+        <section class="sticky-panel">
+            <!-- Adobe Event Log -->
+            <div class="card" style="margin-bottom:1rem; border: 1px solid #712cf9;">
+                <h3 style="font-size: 1rem; color: var(--event-purple); margin-top:0;">Adobe Launch Monitor</h3>
+                <div id="event-log" class="log-panel" style="height: 150px; background: #1a1a1a;">
+                    <!-- Events appear here -->
+                </div>
+            </div>
+
+            <div class="card visualizer-panel">
+                <h2 style="font-size:1.1rem; margin-bottom:0.5rem;">State (window.digitalData)</h2>
+                <div id="json-view" class="json-viewer">
+                    <!-- JSON Tree -->
+                </div>
+
+                <h3 style="font-size:0.9rem; margin-top: 1rem; color:#666;">Console Output</h3>
+                <div id="console-log" class="log-panel" style="height:100px;">
+                    <!-- Logs -->
+                </div>
+
+                <hr style="margin: 1rem 0; border: none; border-top: 1px solid #eee;">
+
+                <!-- Controls Row -->
+                <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                    <button class="action-btn secondary" onclick="app.openSchemaEditor()">✏️ Edit Schema</button>
+                    <label style="display: flex; align-items: center; gap: 5px; font-size: 0.85rem; cursor: pointer;">
+                        <input type="checkbox" id="adobe-toggle" onchange="app.toggleAdobeMode(this.checked)">
+                        <span>Use Real Adobe Launch</span>
+                    </label>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Schema Editor Modal -->
+    <div id="schema-modal" class="modal-overlay">
+        <div class="modal-content" style="width: 600px;">
+            <div class="modal-header">
+                <h3>Edit Schema JSON</h3>
+                <button class="modal-close" onclick="app.closeSchemaEditor()">×</button>
+            </div>
+            <div class="modal-body">
+                <textarea id="schema-json"
+                    style="width:100%; height:300px; font-family: Consolas, monospace; font-size: 0.85rem;"></textarea>
+                <p style="font-size: 0.8rem; color: #888; margin-top: 10px;">Editing will reinitialize the data layer.
+                    Use valid JSON.</p>
+                <button class="action-btn" style="margin-top: 1rem;" onclick="app.applySchema()">Apply Schema</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 1. Load Mocks -->
+    <script src="mock-environment.js"></script>
+
+    <!-- 2. Load Source Files (Via Loader Logic) -->
+    <!-- Since browsers can't require(), we essentially cat them or load them as simple scripts. 
+         But our mock-environment defines 'module' and 'require', so we can just load them. 
+         NOTE: We need to load utils first, then dataLayerManager. -->
+
+    <!-- We need to fetch the files and eval them because <script src> doesn't share CommonJS scope easily 
+         without a bundler. For this simple demo, we will use a small fetch-loader in the main app script 
+         or just include them if we assume local file access (which might be blocked by CORS). 
+         
+         BETTER APPROACH for local file system demo: 
+         We will assume the user opens this via a server. If file:// protocol, fetch won't work.
+         Let's try standard script tags, but our source files use `module.exports`. 
+         Mock environment handles `module` assignment. 
+         We need to Capture the export after each load.
+    -->
+
+    <script>
+        // Loader Helper
+        window.utilsModule = null;
+        window.dataLayerModule = null;
+    </script>
+
+    <!-- Load Utils -->
+    <script src="../src/lib/utils.js"></script>
+    <script>
+        // Capture utils export
+        window.utilsModule = window.module.exports;
+        window.module.exports = {}; // Reset for next file
+    </script>
+
+    <!-- Load Data Layer Manager -->
+    <script src="../src/lib/dataLayerManager.js"></script>
+
+    <!-- 3. Load App Logic -->
+    <script src="app.js"></script>
+
+</body>
+
+</html>

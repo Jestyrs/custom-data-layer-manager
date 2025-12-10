@@ -1,0 +1,59 @@
+{
+  "name": "xdm-development-bridge",
+  "displayName": "XDM Development Bridge",
+  "version": "1.0.0",
+  "platform": "web",
+  "description": "Initializes a configurable data layer object on the window with schema path validation.",
+  "author": {
+    "name": "CuraCor Solutions",
+    "url": "https://www.curacor.com"
+  },
+  "viewBasePath": "src/view",
+  "iconPath": "src/view/images/CuraCor.svg",
+  "configuration": {
+    "viewPath": "configuration/configuration.html",
+    "schema": {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "type": "object",
+      "properties": {
+        "dataObjectName": {
+          "type": "string",
+          "description": "Name for the data layer object on the window (e.g., 'myDL'). Must be a valid JavaScript variable name.",
+          "pattern": "^[a-zA-Z_$][a-zA-Z0-9_$]*$"
+        },
+        "tenantPropertyName": {
+          "type": "string",
+          "description": "The top-level property name for your data (e.g., _ccs). Must be a valid JavaScript variable name.",
+          "pattern": "^[a-zA-Z_$][a-zA-Z0-9_$]*$"
+        },
+        "initialSchemaJson": {
+          "type": "string",
+          "description": "JSON schema defining the allowed structure (as a string)."
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    }
+  },
+  "dataElements": [
+    {
+      "name": "get-data",
+      "displayName": "Get Data from Layer",
+      "libPath": "src/lib/getData.js",
+      "viewPath": "getDataView.html",
+      "schema": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "path to the data (e.g., 'user.profile.id')."
+          }
+        },
+        "required": [ "path" ],
+        "additionalProperties": false
+      }
+    }
+  ],
+  "main": "src/lib/dataLayerManager.js"
+}

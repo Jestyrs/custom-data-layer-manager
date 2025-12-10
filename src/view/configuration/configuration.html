@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Data Layer Configuration</title>
+
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/iconoir-icons/iconoir@main/css/iconoir.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/androidstudio.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <style>
+        .method-details {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            background-color: #f9f9f9;
+        }
+
+        .method-summary {
+            font-weight: bold;
+            padding: 10px;
+            cursor: pointer;
+            background-color: #f3f3f3;
+            font-family: monospace;
+            font-size: 11pt;
+            outline: none;
+        }
+
+            .method-summary:hover {
+                background-color: #e9e9e9;
+            }
+
+        .method-content {
+            padding: 0 15px 15px 15px;
+            border-top: 1px solid #ddd;
+        }
+
+        .method-summary::marker {
+            color: #444;
+        }
+
+        .sub_panel_method_subsection {
+            margin-top: 15px;
+            padding-top: 15px;
+            padding-left: 20px;
+            border-top: 1px dashed #ccc;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="panel">
+        <p class="extension_header extra_bottom_margin">
+            <b class="panel_heading">Configuration</b><br />
+            To setup your XDM development bridge we need a few pieces of information. For more information on how to utilize the extension, you can visit this page.
+        </p>
+        <div class="sub_panel extra_bottom_margin">
+            <div class="sub_panel_header">Data Object Name</div>
+            <div class="sub_panel_setting">
+                <div class="sub_panel_help">
+                    The name of the data layer object attached to the window (ccsData).
+                </div>
+                <input class="input" id="dataObjectName" />
+            </div>
+        </div>
+        <div class="sub_panel extra_bottom_margin">
+            <div class="sub_panel_header">Tenant Property Name</div>
+            <div class="sub_panel_setting">
+                <div class="sub_panel_help">
+                    The top-level property name for your data, often based on your Adobe tenant ID (_bcbsnc).
+                </div>
+                <input class="input" id="tenantPropertyName" />
+            </div>
+        </div>
+        <div class="sub_panel extra_bottom_margin">
+            <div class="sub_panel_header">Edit Schema</div>
+            <div class="sub_panel_setting">
+                <div class="sub_panel_help extra_bottom_margin">
+                    Define the allowed data structure of your data object. This schema applies to the data inside your Tenant Property.
+                    <button style="float: right" class="env_button" id="editSchemaButton">Edit Schema</button>
+                </div>
+            </div>
+        </div>
+        <div class="sub_panel extra_bottom_margin">
+            <div class="sub_panel_header">Public Methods</div>
+            <div class="sub_panel_setting">
+                <div class="sub_panel_help extra_bottom_margin">
+                    <p class="sub_panel_method_help" style="padding-bottom: 10px;">Note: All paths are relative to your configured **Tenant Property Name**.</p>
+
+                    <div class="sub_panel_method">.get(path)</div>
+                    <p class="sub_panel_method_help">This method retrieves a single value from the data layer's state using dot-notation.</p>
+                    <pre><code class="language-javascript">window.ccsData.get('user.authenticated');</code></pre>
+
+                    <div class="sub_panel_method">.set(path, value)</div>
+                    <p class="sub_panel_method_help">Sets a value at a specific path in the data layer. Requires the path and value type to be defined in the schema.</p>
+                    <pre><code class="language-javascript">window.ccsData.set('user.lob_plan_code', 'ABC-123');</code></pre>
+
+                    <div class="sub_panel_method">.setView(viewName)</div>
+                    <p class="sub_panel_method_help">An alias for <code>setPageName</code>. This method sets the value of <code>page.name</code>.</p>
+                    <pre><code class="language-javascript">window.ccsData.setView('Product Details');</code></pre>
+
+                    <div class="sub_panel_method">.setAssets(path, assetsList)</div>
+                    <p class="sub_panel_method_help">Adds or updates assets within an `assets` array using a "list of pairs" format.</p>
+                    <pre><code class="language-javascript">window.ccsData.setAssets('application', [['site', 'pubweb']]);</code></pre>
+
+                    <div class="sub_panel_method" style="margin-top: 20px;">.merge(object, [path])</div>
+                    <p class="sub_panel_method_help">Merges an object into the data layer. If the optional <code>path</code> string is provided, the merge happens at that specific location.</p>
+                    <pre><code class="language-javascript">window.ccsData.merge({
+  form: { name: 'request-a-quote' },
+  user: { ruid: 'some-random-user-id' }
+});</code></pre>
+
+                    <div class="sub_panel_method_subsection">
+                        <div class="sub_panel_method" style="font-size: 11pt;">Merge Shortcuts</div>
+                        <p class="sub_panel_method_help" style="margin-bottom: 15px;">The following methods are shortcuts for calling <code>.merge(object, path)</code> on specific top-level properties.</p>
+
+                        <details class="method-details">
+                            <summary class="method-summary">.setApplication(object)</summary>
+                            <div class="method-content">
+                                <p class="sub_panel_method_help">Merges an object into the <code>application</code> property.</p>
+                                <pre><code class="language-javascript">window.ccsData.setApplication({
+  name: 'CustomerPortal',
+  platform: 'desktop'
+});</code></pre>
+                            </div>
+                        </details>
+
+                        <details class="method-details">
+                            <summary class="method-summary">.setEvent(object)</summary>
+                            <div class="method-content">
+                                <p class="sub_panel_method_help">Merges an object into the <code>event</code> property.</p>
+                                <pre><code class="language-javascript">window.ccsData.setEvent({
+  action: 'formStart'
+});</code></pre>
+                            </div>
+                        </details>
+
+                        <details class="method-details">
+                            <summary class="method-summary">.setForm(object)</summary>
+                            <div class="method-content">
+                                <p class="sub_panel_method_help">Merges an object into the <code>form</code> property.</p>
+                                <pre><code class="language-javascript">window.ccsData.setForm({
+  name: 'newsletterSignup',
+  source: 'footer-promo'
+});</code></pre>
+                            </div>
+                        </details>
+
+                        <details class="method-details">
+                            <summary class="method-summary">.setPage(object)</summary>
+                            <div class="method-content">
+                                <p class="sub_panel_method_help">Merges an object into the <code>page</code> property.</p>
+                                <pre><code class="language-javascript">window.ccsData.setPage({
+  error_page: false,
+  views: 3
+});</code></pre>
+                            </div>
+                        </details>
+
+                        <details class="method-details">
+                            <summary class="method-summary">.setUser(object)</summary>
+                            <div class="method-content">
+                                <p class="sub_panel_method_help">Merges an object into the <code>user</code> property.</p>
+                                <pre><code class="language-javascript">window.ccsData.setUser({
+  authenticated: true,
+  gender: 'female'
+});</code></pre>
+                            </div>
+                        </details>
+
+                        <details class="method-details">
+                            <summary class="method-summary">.setSearch(object)</summary>
+                            <div class="method-content">
+                                <p class="sub_panel_method_help">Merges an object into the <code>search</code> property.</p>
+                                <pre><code class="language-javascript">window.ccsData.setSearch({
+  term: 'data layer',
+  result_count: 15
+});</code></pre>
+                            </div>
+                        </details>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="sub_panel extra_bottom_margin">
+            <div class="sub_panel_header">Internal Methods</div>
+            <div class="sub_panel_setting">
+                <div class="sub_panel_help extra_bottom_margin">
+                    <div class="sub_panel_method">._getState()</div>
+                    <p class="sub_panel_method_help">Returns a complete copy of the entire data layer in it's current populated state.</p>
+                    <pre><code class="language-javascript">window.ccsData._getState();</code></pre>
+                    <div class="sub_panel_method">._getSchema()</div>
+                    <p class="sub_panel_method_help">Returns a copy of the JSON schema that the extension is using for validation.</p>
+                    <pre><code class="language-javascript">window.cssData._getSchema();</code></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/json.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    <script src="https://assets.adobedtm.com/activation/reactor/extensionbridge/extensionbridge.min.js"></script>
+    <script>
+        let currentSchemaString = '{}';
+        window.extensionBridge.register({
+            init: function (info) {
+                if (info.settings) {
+                    document.getElementById('dataObjectName').value = info.settings.dataObjectName || '';
+                    document.getElementById('tenantPropertyName').value = info.settings.tenantPropertyName || '';
+                    currentSchemaString = info.settings.initialSchemaJson || '{}';
+                } else {
+                    document.getElementById('dataObjectName').value = 'ccsData';
+                }
+                document.getElementById('editSchemaButton').addEventListener('click', openSchemaEditor);
+            },
+            validate: function () {
+                const nameInput = document.getElementById('dataObjectName');
+                const tenantInput = document.getElementById('tenantPropertyName');
+                const objectName = nameInput.value.trim();
+                const tenantName = tenantInput.value.trim();
+                const isValidObjectName = /^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(objectName);
+                const isValidTenantName = /^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(tenantName);
+                nameInput.classList.remove('error');
+                tenantInput.classList.remove('error');
+                if (!isValidObjectName) {
+                    nameInput.classList.add('error');
+                    alert('Please enter a valid JavaScript variable name for the Data Object Name.');
+                    return false;
+                }
+                if (!isValidTenantName) {
+                    tenantInput.classList.add('error');
+                    alert('Please enter a valid JavaScript variable name for the Tenant Property Name.');
+                    return false;
+                }
+                try {
+                    JSON.parse(currentSchemaString);
+                } catch (e) {
+                    alert('The provided schema is not valid JSON. Please correct it using the Edit Schema button.');
+                    return false;
+                }
+                return true;
+            },
+            getSettings: function () {
+                return {
+                    dataObjectName: document.getElementById('dataObjectName').value.trim(),
+                    tenantPropertyName: document.getElementById('tenantPropertyName').value.trim(),
+                    initialSchemaJson: currentSchemaString
+                };
+            }
+        });
+        function openSchemaEditor() {
+            window.extensionBridge.openCodeEditor({
+                code: currentSchemaString,
+                language: 'json'
+            })
+                .then(function (newSchemaCode) {
+                    currentSchemaString = newSchemaCode || '{}';
+                    console.log('Schema updated.');
+                })
+                .catch(function (error) {
+                    console.error("Error opening or using code editor:", error);
+                });
+        }
+    </script>
+</body>
+</html>

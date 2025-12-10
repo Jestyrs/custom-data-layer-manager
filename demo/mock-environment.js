@@ -1,0 +1,131 @@
+/**
+ * Mock Environment for Extension Testing
+ * Simulates Adobe Launch / Turbine environment
+ */
+
+(function () {
+    console.log('[MockEnv] Initializing Adobe Launch Simulation...');
+
+    // 1. Module System Mock (for CommonJS compatibility in browser)
+    window.module = {};
+    window.exports = {};
+    window.require = function (path) {
+        // Resolve './utils' to the global utils object we will load
+        if (path === './utils') {
+            return window.utilsModule;
+        }
+        return {};
+    };
+
+    // 2. Turbine/Adobe Mock
+    const defaultSchema = {
+        type: 'object',
+        properties: {
+            page: { type: 'object', properties: { view_name: { type: 'string' }, url: { type: 'string' } } },
+            application: {
+                type: 'object',
+                properties: {
+                    touchpoint: { type: 'string' },
+                    kpi: { type: 'string' },
+                    assets: { type: 'array', items: { type: 'object', properties: { name: { type: 'string' }, value: { type: 'string' } } } }
+                }
+            },
+            user: { type: 'object', properties: { id: { type: 'string' }, isLoggedIn: { type: 'boolean' } } },
+            event: { type: 'object', properties: { action: { type: 'string' } } },
+            search: { type: 'object', properties: { term: { type: 'string' }, results_count: { type: 'number' }, result_position: { type: 'number' } } }
+        }
+    };
+
+    window.turbine = {
+        getExtensionSettings: function () {
+            // Use custom schema if provided
+            const schema = window._customSchema || defaultSchema;
+            return {
+                dataObjectName: 'digitalData',
+                tenantPropertyName: 'testTenant',
+                initialSchemaJson: JSON.stringify(schema)
+            };
+        },
+        logger: {
+            log: function (msg) {
+                console.log('[Turbine]', msg);
+                if (window.logToUI) window.logToUI('[Turbine] ' + msg, 'log');
+            },
+            error: function (msg) {
+                console.error('[Turbine]', msg);
+                if (window.logToUI) window.logToUI('[Turbine Error] ' + msg, 'error');
+            }
+        }
+    };
+
+    // 3. Adobe Event Listener Mock (Rules Engine)
+    // We proxy the window.digitalData object *after* it is created to watch for changes.
+    // Since we can't easily proxy the assignment to window.digitalData itself from here (timing),
+    // we will rely on a poller or a wrapper in the app.js to detect changes for the demo.
+    // However, for best realism, let's wrap the set method if we can.
+
+    // We will wait for digitalData to exist to wrap it.
+    const waitForDL = setInterval(() => {
+        if (window.digitalData) {
+            console.log('[MockEnv] digitalData detected.');
+
+            // If Real Adobe mode (from localStorage), skip mock wrappers
+            const useRealAdobe = localStorage.getItem('useRealAdobe') === 'true';
+            if (useRealAdobe) {
+                console.log('[MockEnv] Real Adobe mode enabled. Skipping mock wrappers.');
+                clearInterval(waitForDL);
+                updateVisualizer();
+                return;
+            }
+
+            console.log('[MockEnv] Setting up mock Event Listeners...');
+
+            // Wrap setters to detect events
+            const originalSet = window.digitalData.set;
+            const originalSetView = window.digitalData.setView;
+
+            // Proxy setView -> "Direct Call Rule: View Change"
+            window.digitalData.setView = function (name, touchpoint) {
+                const result = originalSetView.apply(this, arguments);
+                if (result) {
+                    if (window.logToUI) window.logToUI(`[Adobe Rule] Triggered: "View Change" (Page Name: ${name})`, 'event');
+                }
+                updateVisualizer();
+                return result;
+            };
+
+            // Proxy generic set -> Watch for specific keys if needed
+            window.digitalData.set = function (path, value) {
+                const result = originalSet.apply(this, arguments);
+                if (result) {
+                    // Detect Page View change via raw set
+                    if (path === 'page.view_name') {
+                        if (window.logToUI) window.logToUI(`[Adobe Rule] Triggered: "View Change" (Manual Set)`, 'event');
+                    }
+                }
+                updateVisualizer();
+                return result;
+            };
+
+            // Wrap other methods that change state for visualization updates
+            const methods = ['setAssets', 'clearTouchpoint', 'setKPI', 'setTouchpoint'];
+            methods.forEach(m => {
+                if (window.digitalData[m]) {
+                    const orig = window.digitalData[m];
+                    window.digitalData[m] = function () {
+                        const res = orig.apply(this, arguments);
+                        updateVisualizer();
+                        return res;
+                    }
+                }
+            });
+
+            updateVisualizer(); // Initial state
+        }
+    }, 100);
+
+    function updateVisualizer() {
+        if (window.renderJSON) window.renderJSON();
+    }
+
+})();
