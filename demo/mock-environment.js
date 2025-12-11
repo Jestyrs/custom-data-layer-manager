@@ -113,16 +113,12 @@
         if (dl) {
             console.log(`[MockEnv] ${customDataObjectName} detected.`);
 
-            // If Real Adobe mode (from localStorage), skip mock wrappers
+            // If Real Adobe mode (from localStorage), skip mock event logging but still wrap for visualization
             const useRealAdobe = localStorage.getItem('useRealAdobe') === 'true';
-            if (useRealAdobe) {
-                console.log('[MockEnv] Real Adobe mode enabled. Skipping mock wrappers.');
-                clearInterval(waitForDL);
-                updateVisualizer();
-                return;
-            }
 
-            console.log('[MockEnv] Setting up mock Event Listeners...');
+            console.log(useRealAdobe
+                ? '[MockEnv] Real Adobe mode enabled. Setting up visualization wrappers only...'
+                : '[MockEnv] Setting up mock Event Listeners...');
 
             // Wrap setters to detect events
             const originalSet = dl.set;
@@ -131,7 +127,7 @@
             // Proxy setView -> "Direct Call Rule: View Change"
             dl.setView = function (name, touchpoint) {
                 const result = originalSetView.apply(this, arguments);
-                if (result) {
+                if (result && !useRealAdobe) {
                     if (window.logToUI) window.logToUI(`[Adobe Rule] Triggered: "View Change" (Page Name: ${name})`, 'event');
                 }
                 updateVisualizer();
@@ -141,7 +137,7 @@
             // Proxy generic set -> Watch for specific keys if needed
             dl.set = function (path, value) {
                 const result = originalSet.apply(this, arguments);
-                if (result) {
+                if (result && !useRealAdobe) {
                     // Detect Page View change via raw set
                     if (path === 'page.view_name') {
                         if (window.logToUI) window.logToUI(`[Adobe Rule] Triggered: "View Change" (Manual Set)`, 'event');
@@ -152,7 +148,7 @@
             };
 
             // Wrap other methods that change state for visualization updates
-            const methods = ['setAssets', 'clearTouchpoint', 'setKPI', 'setTouchpoint'];
+            const methods = ['setAssets', 'clearTouchpoint', 'setKPI', 'setTouchpoint', 'merge', 'setForm', 'setPage', 'setUser', 'setSearch'];
             methods.forEach(m => {
                 if (dl[m]) {
                     const orig = dl[m];
