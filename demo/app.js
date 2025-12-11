@@ -314,7 +314,7 @@ const app = {
         const dl = this.getDataLayer();
         if (dl) {
             dl.set('search.term', term);
-            dl.set('search.results_count', results.length);
+            dl.set('search.result_count', results.length);
             dl.setKPI('search_executed');
         }
         app.log(`[Search] Term: "${term}", Results: ${results.length}`, 'event');
@@ -342,7 +342,7 @@ const app = {
         // Set Data Layer
         const dl = this.getDataLayer();
         if (dl) {
-            dl.set('search.result_position', pos);
+            dl.set('search.position', pos);
 
             // Formatted Action String
             const val = `search-result-click:${pos}:${total}`;
