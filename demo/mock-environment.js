@@ -6,100 +6,106 @@
 (function () {
     console.log('[MockEnv] Initializing Adobe Launch Simulation...');
 
-    // 1. Module System Mock (for CommonJS compatibility in browser)
-    // Only set up if not already defined (may be set up by index.html)
-    if (!window.module) {
-        window.module = {};
-    }
-    if (!window.exports) {
-        window.exports = {};
-    }
-    if (!window.require) {
-        window.require = function (path) {
-            // Resolve './utils' to the global utils object we will load
-            if (path === './utils') {
-                return window.utilsModule;
-            }
-            return {};
-        };
-    }
-
-    // 2. Turbine/Adobe Mock
-    // Asset type definition for reuse
-    const assetsType = { type: 'array', items: { type: 'object', properties: { name: { type: 'string' }, value: { type: 'string' } } } };
-
-    const defaultSchema = {
-        type: 'object',
-        properties: {
-            page: {
-                type: 'object',
-                properties: {
-                    view_name: { type: 'string' },
-                    url: { type: 'string' },
-                    assets: assetsType
-                }
-            },
-            application: {
-                type: 'object',
-                properties: {
-                    touchpoint: { type: 'string' },
-                    kpi: { type: 'string' },
-                    assets: assetsType
-                }
-            },
-            user: {
-                type: 'object',
-                properties: {
-                    id: { type: 'string' },
-                    isLoggedIn: { type: 'boolean' },
-                    assets: assetsType
-                }
-            },
-            event: { type: 'object', properties: { action: { type: 'string' } } },
-            search: {
-                type: 'object',
-                properties: {
-                    term: { type: 'string' },
-                    results_count: { type: 'number' },
-                    result_position: { type: 'number' },
-                    assets: assetsType
-                }
-            },
-            form: {
-                type: 'object',
-                properties: {
-                    name: { type: 'string' },
-                    step: { type: 'string' },
-                    assets: assetsType
-                }
-            }
-        }
-    };
-
+    // Check mode
+    const useRealAdobe = localStorage.getItem('useRealAdobe') === 'true';
     // Get custom data object name from localStorage (default: digitalData)
     const customDataObjectName = localStorage.getItem('dataObjectName') || 'digitalData';
 
-    window.turbine = {
-        getExtensionSettings: function () {
-            // Use custom schema if provided
-            const schema = window._customSchema || defaultSchema;
-            return {
-                dataObjectName: customDataObjectName,
-                tenantPropertyName: 'testTenant',
-                initialSchemaJson: JSON.stringify(schema)
-            };
-        },
-        logger: {
-            log: function (msg) {
-                console.log('[Turbine]', msg);
-                if (window.logToUI) window.logToUI('[Turbine] ' + msg, 'log');
-            },
-            error: function (msg) {
-                console.error('[Turbine]', msg);
-                if (window.logToUI) window.logToUI('[Turbine Error] ' + msg, 'error');
-            }
+    if (!useRealAdobe) {
+        // 1. Module System Mock (for CommonJS compatibility in browser)
+        // Only set up if not already defined (may be set up by index.html)
+        if (!window.module) {
+            window.module = {};
         }
-    };
+        if (!window.exports) {
+            window.exports = {};
+        }
+        if (!window.require) {
+            window.require = function (path) {
+                // Resolve './utils' to the global utils object we will load
+                if (path === './utils') {
+                    return window.utilsModule;
+                }
+                return {};
+            };
+        }
+    }
+
+    // 2. Turbine/Adobe Mock
+    if (!useRealAdobe) {
+        // Asset type definition for reuse
+        const assetsType = { type: 'array', items: { type: 'object', properties: { name: { type: 'string' }, value: { type: 'string' } } } };
+
+        const defaultSchema = {
+            type: 'object',
+            properties: {
+                page: {
+                    type: 'object',
+                    properties: {
+                        view_name: { type: 'string' },
+                        url: { type: 'string' },
+                        assets: assetsType
+                    }
+                },
+                application: {
+                    type: 'object',
+                    properties: {
+                        touchpoint: { type: 'string' },
+                        kpi: { type: 'string' },
+                        assets: assetsType
+                    }
+                },
+                user: {
+                    type: 'object',
+                    properties: {
+                        id: { type: 'string' },
+                        isLoggedIn: { type: 'boolean' },
+                        assets: assetsType
+                    }
+                },
+                event: { type: 'object', properties: { action: { type: 'string' } } },
+                search: {
+                    type: 'object',
+                    properties: {
+                        term: { type: 'string' },
+                        results_count: { type: 'number' },
+                        result_position: { type: 'number' },
+                        assets: assetsType
+                    }
+                },
+                form: {
+                    type: 'object',
+                    properties: {
+                        name: { type: 'string' },
+                        step: { type: 'string' },
+                        assets: assetsType
+                    }
+                }
+            }
+        };
+
+        window.turbine = {
+            getExtensionSettings: function () {
+                // Use custom schema if provided
+                const schema = window._customSchema || defaultSchema;
+                return {
+                    dataObjectName: customDataObjectName,
+                    tenantPropertyName: 'testTenant',
+                    initialSchemaJson: JSON.stringify(schema)
+                };
+            },
+            logger: {
+                log: function (msg) {
+                    console.log('[Turbine]', msg);
+                    if (window.logToUI) window.logToUI('[Turbine] ' + msg, 'log');
+                },
+                error: function (msg) {
+                    console.error('[Turbine]', msg);
+                    if (window.logToUI) window.logToUI('[Turbine Error] ' + msg, 'error');
+                }
+            }
+        };
+    }
 
     // 3. Adobe Event Listener Mock (Rules Engine)
     // We proxy the data layer object *after* it is created to watch for changes.
@@ -112,9 +118,6 @@
         const dl = window[customDataObjectName];
         if (dl) {
             console.log(`[MockEnv] ${customDataObjectName} detected.`);
-
-            // If Real Adobe mode (from localStorage), skip mock event logging but still wrap for visualization
-            const useRealAdobe = localStorage.getItem('useRealAdobe') === 'true';
 
             console.log(useRealAdobe
                 ? '[MockEnv] Real Adobe mode enabled. Setting up visualization wrappers only...'

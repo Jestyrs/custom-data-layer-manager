@@ -428,7 +428,6 @@
             };
 
             // Use document.write for synchronous loading
-            document.write('<script src="mock-environment.js"><\/script>');
             document.write('<script src="../src/lib/utils.js"><\/script>');
             document.write('<script>window.utilsModule = window.module.exports; window.module.exports = {};<\/script>');
             document.write('<script src="../src/lib/dataLayerManager.js"><\/script>');
@@ -438,6 +437,10 @@
             console.log('[Demo] Real Adobe Launch mode - using extension-provided data layer object.');
             document.write('<script src="app.js"><\/script>');
         }
+
+        // Always load mock-environment.js to provide visualization and wrapper helpers
+        // (It safely checks mode internally to avoid overwriting mocks in real mode)
+        document.write('<script src="mock-environment.js"><\/script>');
     </script>
 
 </body>
