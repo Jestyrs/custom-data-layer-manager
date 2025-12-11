@@ -37,48 +37,135 @@
         const assetsType = { type: 'array', items: { type: 'object', properties: { name: { type: 'string' }, value: { type: 'string' } } } };
 
         const defaultSchema = {
-            type: 'object',
-            properties: {
-                page: {
-                    type: 'object',
-                    properties: {
-                        view_name: { type: 'string' },
-                        url: { type: 'string' },
-                        assets: assetsType
+            "type": "object",
+            "properties": {
+                "application": {
+                    "type": "object",
+                    "properties": {
+                        "touchpoint": { "type": "string" },
+                        "kpi": { "type": "string" },
+                        "assets": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "value": { "type": "string" },
+                                    "name": { "type": "string" }
+                                }
+                            }
+                        }
                     }
                 },
-                application: {
-                    type: 'object',
-                    properties: {
-                        touchpoint: { type: 'string' },
-                        kpi: { type: 'string' },
-                        assets: assetsType
+                "event": {
+                    "type": "object",
+                    "properties": {
+                        "action": { "type": "string" },
+                        "assets": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "value": { "type": "string" },
+                                    "name": { "type": "string" }
+                                }
+                            }
+                        }
                     }
                 },
-                user: {
-                    type: 'object',
-                    properties: {
-                        id: { type: 'string' },
-                        isLoggedIn: { type: 'boolean' },
-                        assets: assetsType
+                "page": {
+                    "type": "object",
+                    "properties": {
+                        "name": { "type": "string" },
+                        "query_string": { "type": "string" },
+                        "hash": { "type": "string" },
+                        "url": { "type": "string" },
+                        "path": { "type": "string" },
+                        "campaign_code": { "type": "string" },
+                        "assets": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "value": { "type": "string" },
+                                    "name": { "type": "string" }
+                                }
+                            }
+                        },
+                        "previous": { "type": "string" },
+                        "views": { "type": "number" },
+                        "error_page": { "type": "boolean" },
+                        "home_page": { "type": "boolean" },
+                        "view_name": { "type": "string" }
                     }
                 },
-                event: { type: 'object', properties: { action: { type: 'string' } } },
-                search: {
-                    type: 'object',
-                    properties: {
-                        term: { type: 'string' },
-                        results_count: { type: 'number' },
-                        result_position: { type: 'number' },
-                        assets: assetsType
+                "form": {
+                    "type": "object",
+                    "properties": {
+                        "assets": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "value": { "type": "string" },
+                                    "name": { "type": "string" }
+                                }
+                            }
+                        },
+                        "error_message": { "type": "string" },
+                        "source": { "type": "string" },
+                        "name": { "type": "string" }
                     }
                 },
-                form: {
-                    type: 'object',
-                    properties: {
-                        name: { type: 'string' },
-                        step: { type: 'string' },
-                        assets: assetsType
+                "search": {
+                    "type": "object",
+                    "properties": {
+                        "term": { "type": "string" },
+                        "result_count": { "type": "integer" },
+                        "category": { "type": "string" },
+                        "filter": { "type": "string" },
+                        "position": { "type": "integer" },
+                        "assets": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "value": { "type": "string" },
+                                    "name": { "type": "string" }
+                                }
+                            }
+                        }
+                    }
+                },
+                "user": {
+                    "type": "object",
+                    "properties": {
+                        "gender": { "type": "string" },
+                        "authenticated": { "type": "boolean" },
+                        "group_number": { "type": "string" },
+                        "group_name": { "type": "string" },
+                        "lob_plan_code": { "type": "string" },
+                        "exchange": { "type": "string" },
+                        "aso": { "type": "boolean" },
+                        "custom_network": { "type": "boolean" },
+                        "age": { "type": "string" },
+                        "policy_active": { "type": "boolean" },
+                        "pcp_selected": { "type": "boolean" },
+                        "signature_service": { "type": "boolean" },
+                        "smart_shopper": { "type": "boolean" },
+                        "assets": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "value": { "type": "string" },
+                                    "name": { "type": "string" }
+                                }
+                            }
+                        },
+                        "session_start": { "type": "string" },
+                        "ruid": { "type": "string" },
+                        "person_id": { "type": "string" },
+                        "relationship": { "type": "string" }
                     }
                 }
             }

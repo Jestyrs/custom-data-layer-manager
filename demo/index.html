@@ -123,6 +123,15 @@
                         <div style="padding: 2rem;">
                             <input type="text" id="find-care-input" placeholder="Search by name or specialty..."
                                 style="width: 100%; padding: 12px; margin-bottom: 1rem;">
+
+                            <div class="input-row" style="margin-bottom:1rem;">
+                                <select id="search-cat" style="flex:1; padding:10px;">
+                                    <option value="doctors">Doctors</option>
+                                    <option value="clinics">Clinics</option>
+                                    <option value="hospitals">Hospitals</option>
+                                </select>
+                                <input type="text" id="search-filter" placeholder="Filter (e.g. 27701)" style="flex:1;">
+                            </div>
                             <button class="pubweb-cta" onclick="app.performSearch()"
                                 analytics-id="find-care-search-btn">Search</button>
 
@@ -196,10 +205,28 @@
                     <!-- Section: Profile & Contact -->
                     <div class="card">
                         <h2>Update Profile</h2>
-                        <input type="text" id="dash-email" placeholder="Email Address"
+                        <input type="text" id="dash-email" placeholder="Email (Person ID)"
                             style="margin-bottom:10px; width: 100%; box-sizing:border-box;">
-                        <input type="text" id="dash-phone" placeholder="Phone Number"
-                            style="margin-bottom:10px; width: 100%; box-sizing:border-box;">
+                        <div class="input-row" style="margin-bottom:10px;">
+                            <input type="text" id="dash-group" placeholder="Group #" style="flex:1;">
+                            <input type="text" id="dash-plan" placeholder="Plan Code" style="flex:1;">
+                        </div>
+                        <div class="input-row" style="margin-bottom:10px;">
+                            <input type="text" id="dash-age" placeholder="Age" style="flex:1;">
+                            <select id="dash-gender" style="flex:1;">
+                                <option value="">Gender</option>
+                                <option value="M">Male</option>
+                                <option value="F">Female</option>
+                            </select>
+                        </div>
+                        <div class="matrix-grid" style="margin-bottom:10px; grid-template-columns: repeat(2, 1fr);">
+                            <label class="checkbox-card"><input type="checkbox" id="user-auth" checked>
+                                Authenticated</label>
+                            <label class="checkbox-card"><input type="checkbox" id="user-active" checked> Policy
+                                Active</label>
+                            <label class="checkbox-card"><input type="checkbox" id="user-aso"> ASO</label>
+                            <label class="checkbox-card"><input type="checkbox" id="user-custom"> Custom Network</label>
+                        </div>
                         <button class="action-btn" onclick="app.simulateAction('update-profile')">Save
                             Changes</button>
                     </div>
@@ -340,7 +367,23 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Advanced Page Controls -->
+                <div class="control-group">
+                    <label>Advanced Page Simulation</label>
+                    <div class="input-row">
+                        <input type="text" id="page-campaign" placeholder="Campaign Code">
+                        <input type="text" id="page-hash" placeholder="URL Hash">
+                    </div>
+                    <div class="matrix-grid" style="margin-top:5px; grid-template-columns: repeat(2, 1fr);">
+                        <label class="checkbox-card"><input type="checkbox" id="page-error"> Error Page</label>
+                        <label class="checkbox-card"><input type="checkbox" id="page-home"> Home Page</label>
+                    </div>
+                    <button class="action-btn" style="margin-top:5px;" onclick="app.handlers.doSetPageMeta()">Set Page
+                        Metadata</button>
+                </div>
             </div>
+        </div>
         </div>
 
         <!-- Right Column: Visualizer -->

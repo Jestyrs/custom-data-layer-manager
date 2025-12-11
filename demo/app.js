@@ -148,19 +148,28 @@ const app = {
             app.log(`[Action] setAssets('${path}', ${JSON.stringify(assetsObj)}) -> ${result}`, 'log');
         },
 
-        doSetTouchpoint: function () {
-            const val = document.getElementById('touchpoint-val').value;
-            const dl = app.getDataLayer();
-            if (!dl) { app.log('[Error] Data layer not found.', 'error'); return; }
-            const result = dl.setTouchpoint(val);
-            app.log(`[Action] setTouchpoint('${val}') -> ${result}`, result ? 'log' : 'error');
-        },
-
         doClearTouchpoint: function () {
             const dl = app.getDataLayer();
             if (!dl) { app.log('[Error] Data layer not found.', 'error'); return; }
             const result = dl.clearTouchpoint();
             app.log(`[Action] clearTouchpoint() -> ${result}`, 'log');
+        },
+
+        doSetPageMeta: function () {
+            const campaign = document.getElementById('page-campaign').value;
+            const hash = document.getElementById('page-hash').value;
+            const isError = document.getElementById('page-error').checked;
+            const isHome = document.getElementById('page-home').checked;
+
+            const dl = app.getDataLayer();
+            if (!dl) { app.log('[Error] Data layer not found.', 'error'); return; }
+
+            if (campaign) dl.set('page.campaign_code', campaign);
+            if (hash) dl.set('page.hash', hash);
+            dl.set('page.error_page', isError);
+            dl.set('page.home_page', isHome);
+
+            app.log(`[Action] Set Page Metadata (Campaign: ${campaign}, Error: ${isError})`, 'log');
         },
     },
 
@@ -192,16 +201,34 @@ const app = {
 
             case 'update-profile':
                 const email = document.getElementById('dash-email').value;
-                const phone = document.getElementById('dash-phone').value;
-                if (!email && !phone) return;
+                const group = document.getElementById('dash-group') ? document.getElementById('dash-group').value : '';
+                const plan = document.getElementById('dash-plan') ? document.getElementById('dash-plan').value : '';
+                const age = document.getElementById('dash-age') ? document.getElementById('dash-age').value : '';
+                const gender = document.getElementById('dash-gender') ? document.getElementById('dash-gender').value : '';
 
-                // Simulate setting values manually for now as setForm isn't in scope of this specific task request (unless already added)
-                // But we can simulate capturing it via individual sets or setAssets? 
-                // Actually, let's just use .set for the demo as we don't have a verified setForm method in the snippet provided.
-                // Or assume we want to demonstrate capturing data.
-                if (email) dl.set('user.id', email); // Using ID as proxy
+                // Get checkboxes
+                const cbAuth = document.getElementById('user-auth');
+                const cbActive = document.getElementById('user-active');
+                const cbAso = document.getElementById('user-aso');
+                const cbCustom = document.getElementById('user-custom');
+
+                if (!email && !group && !plan) return;
+
+                // Set User Data
+                if (email) dl.set('user.person_id', email); // Using person_id
+                if (group) dl.set('user.group_number', group);
+                if (plan) dl.set('user.lob_plan_code', plan);
+                if (age) dl.set('user.age', age);
+                if (gender) dl.set('user.gender', gender);
+
+                // Set Booleans
+                if (cbAuth) dl.set('user.authenticated', cbAuth.checked);
+                if (cbActive) dl.set('user.policy_active', cbActive.checked);
+                if (cbAso) dl.set('user.aso', cbAso.checked);
+                if (cbCustom) dl.set('user.custom_network', cbCustom.checked);
+
                 dl.setTouchpoint('account_mgmt');
-                app.log(`[Flow] Profile Updated -> Captured Data`, 'log');
+                app.log(`[Flow] Profile Updated -> Captured Extended User Data`, 'log');
                 break;
 
             case 'save-prefs':
@@ -301,7 +328,12 @@ const app = {
 
     performSearch: function () {
         const input = document.getElementById('find-care-input');
+        const catInput = document.getElementById('search-cat');
+        const filterInput = document.getElementById('search-filter');
+
         const term = input ? input.value : '';
+        const cat = catInput ? catInput.value : '';
+        const filter = filterInput ? filterInput.value : '';
 
         // Mock Results
         const results = [
@@ -314,10 +346,12 @@ const app = {
         const dl = this.getDataLayer();
         if (dl) {
             dl.set('search.term', term);
-            dl.set('search.results_count', results.length);
+            dl.set('search.result_count', results.length); // Fixed typo in previous schema (results_count vs result_count)
+            if (cat) dl.set('search.category', cat);
+            if (filter) dl.set('search.filter', filter);
             dl.setKPI('search_executed');
         }
-        app.log(`[Search] Term: "${term}", Results: ${results.length}`, 'event');
+        app.log(`[Search] Term: "${term}", Cat: "${cat}", Filter: "${filter}"`, 'event');
 
         // Render Results
         const container = document.getElementById('search-results-container');
