@@ -12,7 +12,7 @@
     const customDataObjectName = localStorage.getItem('dataObjectName') || 'digitalData';
 
     if (!useRealAdobe) {
-        // 1. Module System Mock (for CommonJS compatibility in browser)
+        // Module System Mock (for CommonJS compatibility in browser)
         // Only set up if not already defined (may be set up by index.html)
         if (!window.module) {
             window.module = {};
@@ -31,7 +31,7 @@
         }
     }
 
-    // 2. Turbine/Adobe Mock
+    // Turbine/Adobe Mock
     if (!useRealAdobe) {
         // Asset type definition for reuse
         const assetsType = { type: 'array', items: { type: 'object', properties: { name: { type: 'string' }, value: { type: 'string' } } } };
@@ -107,7 +107,7 @@
         };
     }
 
-    // 3. Adobe Event Listener Mock (Rules Engine)
+    // Adobe Event Listener Mock (Rules Engine)
     // We proxy the data layer object *after* it is created to watch for changes.
     // Since we can't easily proxy the assignment itself from here (timing),
     // we will rely on a poller or a wrapper in the app.js to detect changes for the demo.

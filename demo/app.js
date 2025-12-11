@@ -24,7 +24,7 @@ const app = {
             dataObjectLabel.textContent = 'window.' + this.dataObjectName;
         }
 
-        // 1. Simulate Server-Side Page Load (via Query Params)
+        // Simulate Server-Side Page Load (via Query Params)
         const urlParams = new URLSearchParams(window.location.search);
         const pageParam = urlParams.get('page') || 'home';
 
@@ -235,7 +235,7 @@ const app = {
     },
 
     pubwebWaitAndGo: function (pageId) {
-        // 1. Visual Loading State (Optional realism)
+        // Visual Loading State (Optional realism)
         document.querySelectorAll('.pubweb-nav-item').forEach(el => el.classList.remove('active'));
         // Find the nav item that called (approximate logic or pass element) - simplifying for demo
         // Just highlight based on ID mapping
@@ -245,14 +245,14 @@ const app = {
         const navItems = document.querySelectorAll('.pubweb-nav-item');
         if (navItems[navMap[pageId]] !== undefined) navItems[navMap[pageId]].classList.add('active');
 
-        // 2. Hide all pages
+        // Hide all pages
         document.querySelectorAll('.pubweb-page').forEach(el => el.classList.remove('active'));
 
-        // 3. Show target page
+        // Show target page
         const targetPage = document.getElementById('pub-page-' + pageId);
         if (targetPage) targetPage.classList.add('active');
 
-        // 4. Trigger Data Layer Event
+        // Trigger Data Layer Event
         // Define mapping for view naming
         const viewNameMap = {
             'home': 'pubweb:home',
@@ -310,7 +310,7 @@ const app = {
             { name: 'Central City Hospital', specialty: 'Hospital', distance: '5.0 miles' }
         ];
 
-        // 1. Set Data Layer for Search Event
+        // Set Data Layer for Search Event
         const dl = this.getDataLayer();
         if (dl) {
             dl.set('search.term', term);
@@ -319,7 +319,7 @@ const app = {
         }
         app.log(`[Search] Term: "${term}", Results: ${results.length}`, 'event');
 
-        // 2. Render Results
+        // Render Results
         const container = document.getElementById('search-results-container');
         if (!container) return;
 
@@ -376,14 +376,14 @@ const app = {
         const dl = this.getDataLayer();
         if (dl) {
             // In an SPA, we might clear previous specific data or just set new data.
-            // 1. Set View (Triggers Adobe Rule)
+            // Set View (Triggers Adobe Rule)
             dl.setView('spa:' + viewName);
 
-            // 2. Clear Touchpoint (demonstrating the new feature)
+            // Clear Touchpoint (demonstrating the new feature)
             dl.clearTouchpoint();
         }
 
-        // 3. Update URL (visual only)
+        // Update URL (visual only)
         window.history.pushState({}, '', '?page=' + viewName);
 
         // UI Updates
