@@ -121,318 +121,350 @@
                             <p>Locate doctors, hospitals, and urgent care centers near you.</p>
                         </div>
                         <div style="padding: 2rem;">
-                            <input type="text" id="find-care-input" placeholder="Search by name or specialty..."
-                                style="width: 100%; padding: 12px; margin-bottom: 1rem;">
-
                             <div class="input-row" style="margin-bottom:1rem;">
-                                <select id="search-cat" style="flex:1; padding:10px;">
-                                    <option value="doctors">Doctors</option>
-                                    <option value="clinics">Clinics</option>
-                                    <option value="hospitals">Hospitals</option>
-                                </select>
-                                <input type="text" id="search-filter" placeholder="Filter (e.g. 27701)" style="flex:1;">
-                            </div>
-                            <button class="pubweb-cta" onclick="app.performSearch()"
-                                analytics-id="find-care-search-btn">Search</button>
+                                <!-- Page: About -->
+                                <div id="pub-page-about" class="pubweb-page">
+                                    <div style="padding: 2rem; background: #eef5ff;">
+                                        <h2>About Blue Cross NC</h2>
+                                        <p>Our purpose is to improve the health and well-being of our customers and
+                                            communities.</p>
 
-                            <!-- Search Results Container -->
-                            <div id="search-results-container" style="margin-top: 2rem;"></div>
-                        </div>
-                    </div>
+                                        <div style="margin-top:2rem; padding: 1rem; border-top: 1px solid #ddd;">
+                                            <h4>Simulate Marketing Traffic</h4>
+                                            <p style="font-size:0.85rem; color:#666;">Clicking below simulates arriving
+                                                via an email
+                                                campaign or hitting a 404.</p>
+                                            <button class="action-btn"
+                                                onclick="app.simulateExternalLink('campaign')">Simulate Email
+                                                Campaign</button>
+                                            <button class="action-btn secondary"
+                                                onclick="app.simulateExternalLink('404')">Simulate
+                                                Broken Link (404)</button>
+                                        </div>
+                                    </div>
+                                </div>
 
-                    <!-- Page: About -->
-                    <div id="pub-page-about" class="pubweb-page">
-                        <div style="padding: 2rem;">
-                            <h2>About Blue Cross NC</h2>
-                            <p>Our purpose is to improve the health and well-being of our customers and communities. We
-                                won't stop until health care is better for all.</p>
-                        </div>
-                    </div>
+                                <!-- Modal: Quote -->
+                                <div id="quote-modal" class="modal-overlay">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h3>Get a Health Insurance Quote</h3>
+                                            <button class="modal-close" onclick="app.closeQuoteModal()">×</button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <label style="display:block; margin-bottom:5px;">Zip Code</label>
+                                            <input type="text" id="quote-zip" placeholder="Enter Zip Code" value="27701"
+                                                style="width:100%; padding:8px; margin-bottom:15px; box-sizing:border-box;">
 
-                    <!-- Modal: Quote -->
-                    <div id="quote-modal" class="modal-overlay">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h3>Get a Health Insurance Quote</h3>
-                                <button class="modal-close" onclick="app.closeQuoteModal()">×</button>
-                            </div>
-                            <div class="modal-body">
-                                <label style="display:block; margin-bottom:5px;">Zip Code</label>
-                                <input type="text" id="quote-zip" placeholder="Enter Zip Code" value="27701"
-                                    style="width:100%; padding:8px; margin-bottom:15px; box-sizing:border-box;">
+                                            <label style="display:block; margin-bottom:5px;">County</label>
+                                            <select style="width:100%; padding:8px; margin-bottom:20px;">
+                                                <option>Durham</option>
+                                                <option>Wake</option>
+                                                <option>Orange</option>
+                                            </select>
 
-                                <label style="display:block; margin-bottom:5px;">County</label>
-                                <select style="width:100%; padding:8px; margin-bottom:20px;">
-                                    <option>Durham</option>
-                                    <option>Wake</option>
-                                    <option>Orange</option>
-                                </select>
+                                            <button class="pubweb-cta" style="width:100%; margin-bottom:10px;"
+                                                onclick="app.submitQuote()" analytics-id="modal-view-plans">View
+                                                Plans</button>
+                                            <button class="action-btn secondary"
+                                                style="width:100%; background:#f8d7da; color: #721c24; border:1px solid #f5c6cb;"
+                                                onclick="app.submitQuote(true)">Simulate Error</button>
+                                        </div>
+                                    </div>
+                                </div>
 
-                                <button class="pubweb-cta" style="width:100%;" onclick="app.submitQuote()"
-                                    analytics-id="modal-view-plans">View Plans</button>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-            <!-- Tab 1: Realistic Member Dashboard -->
-            <div id="dashboard-tab" class="tab-content active">
-
-                <div class="welcome-banner">
-                    <h1>Good Afternoon, John</h1>
-                    <p>Member ID: XJ92839281 | Plan: Blue Advantage Gold</p>
-                </div>
-
-                <div class="dashboard-grid">
-                    <!-- Section: Quick Actions -->
-                    <div class="card">
-                        <h2>Quick Actions</h2>
-                        <div class="action-grid">
-                            <div class="quick-action-card" onclick="app.simulateAction('pay-bill')">
-                                💰 Pay Premium
-                            </div>
-                            <div class="quick-action-card" onclick="app.simulateAction('find-doc')">
-                                👨‍⚕️ Find Doctor
-                            </div>
-                            <div class="quick-action-card" onclick="app.simulateAction('view-claims')">
-                                📄 View Claims
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Section: Profile & Contact -->
-                    <div class="card">
-                        <h2>Update Profile</h2>
-                        <input type="text" id="dash-email" placeholder="Email (Person ID)"
-                            style="margin-bottom:10px; width: 100%; box-sizing:border-box;">
-                        <div class="input-row" style="margin-bottom:10px;">
-                            <input type="text" id="dash-group" placeholder="Group #" style="flex:1;">
-                            <input type="text" id="dash-plan" placeholder="Plan Code" style="flex:1;">
-                        </div>
-                        <div class="input-row" style="margin-bottom:10px;">
-                            <input type="text" id="dash-age" placeholder="Age" style="flex:1;">
-                            <select id="dash-gender" style="flex:1;">
-                                <option value="">Gender</option>
-                                <option value="M">Male</option>
-                                <option value="F">Female</option>
-                            </select>
-                        </div>
-                        <div class="matrix-grid" style="margin-bottom:10px; grid-template-columns: repeat(2, 1fr);">
-                            <label class="checkbox-card"><input type="checkbox" id="user-auth" checked>
-                                Authenticated</label>
-                            <label class="checkbox-card"><input type="checkbox" id="user-active" checked> Policy
-                                Active</label>
-                            <label class="checkbox-card"><input type="checkbox" id="user-aso"> ASO</label>
-                            <label class="checkbox-card"><input type="checkbox" id="user-custom"> Custom Network</label>
-                        </div>
-                        <button class="action-btn" onclick="app.simulateAction('update-profile')">Save
-                            Changes</button>
-                    </div>
+                        <!-- Tab 1: Realistic Member Dashboard -->
+                        <div id="dashboard-tab" class="tab-content active">
 
-                    <!-- Section: Contact Preferences -->
-                    <div class="card">
-                        <h2>Contact Preferences</h2>
-                        <p style="font-size:0.9rem; color:#666; margin-bottom:1rem;">How should we contact you?</p>
-                        <div class="form-section">
-                            <div class="matrix-grid">
-                                <label class="checkbox-card">
-                                    <input type="checkbox" name="pref" value="email" checked> Email
-                                </label>
-                                <label class="checkbox-card">
-                                    <input type="checkbox" name="pref" value="sms"> SMS / Text
-                                </label>
-                                <label class="checkbox-card">
-                                    <input type="checkbox" name="pref" value="mail"> Paper Mail
-                                </label>
-                                <label class="checkbox-card">
-                                    <input type="checkbox" name="pref" value="push"> App Push
-                                </label>
+                            <div class="welcome-banner">
+                                <h1>Good Afternoon, John</h1>
+                                <p>Member ID: XJ92839281 | Plan: Blue Advantage Gold</p>
+                            </div>
+
+                            <div class="dashboard-grid">
+                                <!-- Section: Quick Actions -->
+                                <div class="card">
+                                    <h2>Quick Actions</h2>
+                                    <div class="action-grid">
+                                        <div class="quick-action-card" onclick="app.simulateAction('pay-bill')">
+                                            💰 Pay Premium
+                                        </div>
+                                        <div class="quick-action-card" onclick="app.simulateAction('find-doc')">
+                                            👨‍⚕️ Find Doctor
+                                        </div>
+                                        <div class="quick-action-card" onclick="app.simulateAction('view-claims')">
+                                            📄 View Claims
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Section: Member Identity Scenarios -->
+                                <div class="card">
+                                    <h2>Member Identity</h2>
+                                    <div class="action-grid" style="margin-bottom: 1rem;">
+                                        <div class="quick-action-card" onclick="app.simulateAction('login')"
+                                            id="btn-login">
+                                            🔒 Simulate Login
+                                        </div>
+                                        <div class="quick-action-card" onclick="app.simulateAction('view-id-card')">
+                                            💳 View ID Card
+                                        </div>
+                                    </div>
+                                    <div id="id-card-display"
+                                        style="display:none; background: #eef5ff; padding: 10px; border-radius: 4px; border: 1px solid #cce0ff; margin-top: 10px;">
+                                        <h4 style="margin-top:0; color:#004d8c;">Blue Cross NC</h4>
+                                        <p style="margin:5px 0; font-size:0.85rem;"><strong>Plan:</strong> <span
+                                                id="id-plan-name">--</span></p>
+                                        <p style="margin:5px 0; font-size:0.85rem;"><strong>Group:</strong> 982731 |
+                                            <strong>Member:</strong> 883721901
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <!-- Section: Profile Update -->
+                                <div class="card">
+                                    <h2>Update Profile</h2>
+                                    <input type="text" id="dash-email" placeholder="Email Address"
+                                        value="john.doe@example.com"
+                                        style="margin-bottom:10px; width: 100%; box-sizing:border-box;">
+                                    <input type="text" id="dash-phone" placeholder="Phone"
+                                        style="margin-bottom:10px; width: 100%; box-sizing:border-box;">
+                                    <div class="input-row" style="margin-bottom:10px;">
+                                        <select id="dash-gender" style="flex:1;">
+                                            <option value="M">Male</option>
+                                            <option value="F">Female</option>
+                                        </select>
+                                        <input type="text" id="dash-age" placeholder="Age" value="34" style="flex:1;">
+                                    </div>
+                                    <button class="action-btn" onclick="app.simulateAction('update-profile')">Save
+                                        Changes</button>
+                                </div>
+
+                                <!-- Section: Contact Preferences -->
+                                <div class="card">
+                                    <h2>Contact Preferences</h2>
+                                    <p style="font-size:0.9rem; color:#666; margin-bottom:1rem;">How should we contact
+                                        you?</p>
+                                    <div class="form-section">
+                                        <div class="matrix-grid">
+                                            <label class="checkbox-card">
+                                                <input type="checkbox" name="pref" value="email" checked> Email
+                                            </label>
+                                            <label class="checkbox-card">
+                                                <input type="checkbox" name="pref" value="sms"> SMS / Text
+                                            </label>
+                                            <label class="checkbox-card">
+                                                <input type="checkbox" name="pref" value="mail"> Paper Mail
+                                            </label>
+                                            <label class="checkbox-card">
+                                                <input type="checkbox" name="pref" value="push"> App Push
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <button class="action-btn" onclick="app.simulateAction('save-prefs')">Update
+                                        Preferences</button>
+                                </div>
+
+                                <!-- Section: Health Interests (Asset Matrix) -->
+                                <div class="card" style="grid-column: 1 / -1;">
+                                    <h2>Personalize Your Health Feed</h2>
+                                    <p style="font-size:0.9rem; color:#666;">Select topics to follow (Tests `setAssets`
+                                        with
+                                        arrays):</p>
+
+                                    <div class="matrix-grid" style="grid-template-columns: repeat(3, 1fr);">
+                                        <label class="checkbox-card"><input type="checkbox" name="topic"
+                                                value="fitness"> Fitness &
+                                            Exercise</label>
+                                        <label class="checkbox-card"><input type="checkbox" name="topic"
+                                                value="nutrition">
+                                            Nutrition & Diet</label>
+                                        <label class="checkbox-card"><input type="checkbox" name="topic" value="mental">
+                                            Mental
+                                            Health</label>
+                                        <label class="checkbox-card"><input type="checkbox" name="topic"
+                                                value="prevention">
+                                            Preventive Care</label>
+                                        <label class="checkbox-card"><input type="checkbox" name="topic"
+                                                value="diabetes"> Diabetes
+                                            Mgmt</label>
+                                        <label class="checkbox-card"><input type="checkbox" name="topic" value="heart">
+                                            Heart
+                                            Health</label>
+                                    </div>
+
+                                    <div style="margin-top:1rem; text-align:right;">
+                                        <button class="action-btn" onclick="app.simulateAction('save-topics')">Save
+                                            Interests</button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <button class="action-btn" onclick="app.simulateAction('save-prefs')">Update
-                            Preferences</button>
-                    </div>
 
-                    <!-- Section: Health Interests (Asset Matrix) -->
-                    <div class="card" style="grid-column: 1 / -1;">
-                        <h2>Personalize Your Health Feed</h2>
-                        <p style="font-size:0.9rem; color:#666;">Select topics to follow (Tests `setAssets` with
-                            arrays):</p>
+                        <!-- Tab 2: Dev Playground (Existing Controls) -->
+                        <div id="playground-tab" class="tab-content">
+                            <div class="card controls-panel">
+                                <h2>Manual Data Layer Controls</h2>
+                                <p style="color:#666; margin-bottom:1.5rem;">Directly manipulate the data layer to test
+                                    specific
+                                    edge cases.</p>
 
-                        <div class="matrix-grid" style="grid-template-columns: repeat(3, 1fr);">
-                            <label class="checkbox-card"><input type="checkbox" name="topic" value="fitness"> Fitness &
-                                Exercise</label>
-                            <label class="checkbox-card"><input type="checkbox" name="topic" value="nutrition">
-                                Nutrition & Diet</label>
-                            <label class="checkbox-card"><input type="checkbox" name="topic" value="mental"> Mental
-                                Health</label>
-                            <label class="checkbox-card"><input type="checkbox" name="topic" value="prevention">
-                                Preventive Care</label>
-                            <label class="checkbox-card"><input type="checkbox" name="topic" value="diabetes"> Diabetes
-                                Mgmt</label>
-                            <label class="checkbox-card"><input type="checkbox" name="topic" value="heart"> Heart
-                                Health</label>
-                        </div>
+                                <!-- .get() -->
+                                <div class="control-group">
+                                    <label>Get Value (.get)</label>
+                                    <div class="input-row">
+                                        <input type="text" id="get-path" placeholder="Path (e.g. user.id)">
+                                        <button class="action-btn secondary" onclick="app.handlers.doGet()">Get</button>
+                                    </div>
+                                    <div id="get-result"
+                                        style="margin-top:5px; font-family:monospace; color:#333; font-size:0.9rem; background:#f4f4f4; padding:5px; border-radius:4px; min-height:24px;">
+                                    </div>
+                                </div>
 
-                        <div style="margin-top:1rem; text-align:right;">
-                            <button class="action-btn" onclick="app.simulateAction('save-topics')">Save
-                                Interests</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+                                <!-- .set() -->
+                                <div class="control-group">
+                                    <label>Generic Set (.set)</label>
+                                    <div class="input-row">
+                                        <input type="text" id="set-path" placeholder="Path (e.g. user.id)">
+                                        <input type="text" id="set-value" placeholder="Value (e.g. 12345)">
+                                        <button class="action-btn" onclick="app.handlers.doSet()">Set</button>
+                                    </div>
+                                    <small style="color: #666;">Note: Objects/Arrays are blocked by strict
+                                        validation.</small>
+                                </div>
 
-            <!-- Tab 2: Dev Playground (Existing Controls) -->
-            <div id="playground-tab" class="tab-content">
-                <div class="card controls-panel">
-                    <h2>Manual Data Layer Controls</h2>
-                    <p style="color:#666; margin-bottom:1.5rem;">Directly manipulate the data layer to test specific
-                        edge cases.</p>
+                                <!-- .merge() -->
+                                <div class="control-group">
+                                    <label>Merge Object (.merge)</label>
+                                    <input type="text" id="merge-path" placeholder="Path (e.g. user) or empty for root"
+                                        style="margin-bottom:5px; margin-top:5px; width:100%; box-sizing:border-box;">
+                                    <textarea id="merge-json" placeholder='{ "id": "123", "isLoggedIn": true }'
+                                        style="width:100%; height:80px; font-family:monospace; border:1px solid #ccc; border-radius:4px; padding:5px; box-sizing:border-box;"></textarea>
+                                    <div style="margin-top:5px; text-align:right;">
+                                        <button class="action-btn" onclick="app.handlers.doMerge()">Merge JSON</button>
+                                    </div>
+                                </div>
 
-                    <!-- .get() -->
-                    <div class="control-group">
-                        <label>Get Value (.get)</label>
-                        <div class="input-row">
-                            <input type="text" id="get-path" placeholder="Path (e.g. user.id)">
-                            <button class="action-btn secondary" onclick="app.handlers.doGet()">Get</button>
-                        </div>
-                        <div id="get-result"
-                            style="margin-top:5px; font-family:monospace; color:#333; font-size:0.9rem; background:#f4f4f4; padding:5px; border-radius:4px; min-height:24px;">
-                        </div>
-                    </div>
+                                <!-- .setView() -->
+                                <div class="control-group">
+                                    <label>Set Page View (.setView)</label>
+                                    <div class="input-row">
+                                        <input type="text" id="view-name" placeholder="View Name (e.g. home)">
+                                        <input type="text" id="view-touchpoint" placeholder="Touchpoint (Optional)">
+                                        <button class="action-btn" onclick="app.handlers.doSetView()">Set View</button>
+                                    </div>
+                                </div>
 
-                    <!-- .set() -->
-                    <div class="control-group">
-                        <label>Generic Set (.set)</label>
-                        <div class="input-row">
-                            <input type="text" id="set-path" placeholder="Path (e.g. user.id)">
-                            <input type="text" id="set-value" placeholder="Value (e.g. 12345)">
-                            <button class="action-btn" onclick="app.handlers.doSet()">Set</button>
-                        </div>
-                        <small style="color: #666;">Note: Objects/Arrays are blocked by strict validation.</small>
-                    </div>
+                                <!-- .setKPI() -->
+                                <div class="control-group">
+                                    <label>Set KPI (.setKPI)</label>
+                                    <div class="input-row">
+                                        <input type="text" id="kpi-name"
+                                            placeholder="KPI Name (e.g. purchase_complete)">
+                                        <button class="action-btn" onclick="app.handlers.doSetKPI()">Trigger
+                                            KPI</button>
+                                    </div>
+                                </div>
 
-                    <!-- .merge() -->
-                    <div class="control-group">
-                        <label>Merge Object (.merge)</label>
-                        <input type="text" id="merge-path" placeholder="Path (e.g. user) or empty for root"
-                            style="margin-bottom:5px; margin-top:5px; width:100%; box-sizing:border-box;">
-                        <textarea id="merge-json" placeholder='{ "id": "123", "isLoggedIn": true }'
-                            style="width:100%; height:80px; font-family:monospace; border:1px solid #ccc; border-radius:4px; padding:5px; box-sizing:border-box;"></textarea>
-                        <div style="margin-top:5px; text-align:right;">
-                            <button class="action-btn" onclick="app.handlers.doMerge()">Merge JSON</button>
-                        </div>
-                    </div>
+                                <!-- setAssets() -->
+                                <div class="control-group">
+                                    <label>Set Assets (setAssets)</label>
+                                    <div class="input-row">
+                                        <input type="text" id="asset-path" value="application"
+                                            placeholder="Parent Path">
+                                        <input type="text" id="asset-key" placeholder="Name">
+                                        <input type="text" id="asset-val" placeholder="Value">
+                                        <button class="action-btn" onclick="app.handlers.doSetAssets()">Add
+                                            Asset</button>
+                                    </div>
+                                </div>
 
-                    <!-- .setView() -->
-                    <div class="control-group">
-                        <label>Set Page View (.setView)</label>
-                        <div class="input-row">
-                            <input type="text" id="view-name" placeholder="View Name (e.g. home)">
-                            <input type="text" id="view-touchpoint" placeholder="Touchpoint (Optional)">
-                            <button class="action-btn" onclick="app.handlers.doSetView()">Set View</button>
-                        </div>
-                    </div>
+                                <!-- Touchpoint Controls -->
+                                <div class="control-group">
+                                    <label>Touchpoint Management</label>
+                                    <div class="input-row">
+                                        <input type="text" id="touchpoint-val" placeholder="Touchpoint Name">
+                                        <button class="action-btn" onclick="app.handlers.doSetTouchpoint()">Set</button>
+                                        <button class="action-btn secondary"
+                                            onclick="app.handlers.doClearTouchpoint()">Clear</button>
+                                    </div>
+                                </div>
+                            </div>
 
-                    <!-- .setKPI() -->
-                    <div class="control-group">
-                        <label>Set KPI (.setKPI)</label>
-                        <div class="input-row">
-                            <input type="text" id="kpi-name" placeholder="KPI Name (e.g. purchase_complete)">
-                            <button class="action-btn" onclick="app.handlers.doSetKPI()">Trigger KPI</button>
-                        </div>
-                    </div>
-
-                    <!-- setAssets() -->
-                    <div class="control-group">
-                        <label>Set Assets (setAssets)</label>
-                        <div class="input-row">
-                            <input type="text" id="asset-path" value="application" placeholder="Parent Path">
-                            <input type="text" id="asset-key" placeholder="Name">
-                            <input type="text" id="asset-val" placeholder="Value">
-                            <button class="action-btn" onclick="app.handlers.doSetAssets()">Add Asset</button>
-                        </div>
-                    </div>
-
-                    <!-- Touchpoint Controls -->
-                    <div class="control-group">
-                        <label>Touchpoint Management</label>
-                        <div class="input-row">
-                            <input type="text" id="touchpoint-val" placeholder="Touchpoint Name">
-                            <button class="action-btn" onclick="app.handlers.doSetTouchpoint()">Set</button>
-                            <button class="action-btn secondary"
-                                onclick="app.handlers.doClearTouchpoint()">Clear</button>
+                            <!-- Advanced Page Controls -->
+                            <div class="control-group">
+                                <label>Advanced Page Simulation</label>
+                                <div class="input-row">
+                                    <input type="text" id="page-campaign" placeholder="Campaign Code">
+                                    <input type="text" id="page-hash" placeholder="URL Hash">
+                                </div>
+                                <div class="matrix-grid" style="margin-top:5px; grid-template-columns: repeat(2, 1fr);">
+                                    <label class="checkbox-card"><input type="checkbox" id="page-error"> Error
+                                        Page</label>
+                                    <label class="checkbox-card"><input type="checkbox" id="page-home"> Home
+                                        Page</label>
+                                </div>
+                                <button class="action-btn" style="margin-top:5px;"
+                                    onclick="app.handlers.doSetPageMeta()">Set Page
+                                    Metadata</button>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Advanced Page Controls -->
-                <div class="control-group">
-                    <label>Advanced Page Simulation</label>
-                    <div class="input-row">
-                        <input type="text" id="page-campaign" placeholder="Campaign Code">
-                        <input type="text" id="page-hash" placeholder="URL Hash">
+                <!-- Right Column: Visualizer -->
+                <section class="sticky-panel">
+                    <!-- Adobe Event Log -->
+                    <div class="card" style="margin-bottom:1rem; border: 1px solid #712cf9;">
+                        <h3 style="font-size: 1rem; color: var(--event-purple); margin-top:0;">Adobe Launch Monitor</h3>
+                        <div id="event-log" class="log-panel" style="height: 150px; background: #1a1a1a;">
+                            <!-- Events appear here -->
+                        </div>
                     </div>
-                    <div class="matrix-grid" style="margin-top:5px; grid-template-columns: repeat(2, 1fr);">
-                        <label class="checkbox-card"><input type="checkbox" id="page-error"> Error Page</label>
-                        <label class="checkbox-card"><input type="checkbox" id="page-home"> Home Page</label>
+
+                    <div class="card visualizer-panel">
+                        <h2 style="font-size:1.1rem; margin-bottom:0.5rem;">State (<span
+                                id="data-object-label">window.digitalData</span>)</h2>
+                        <div id="json-view" class="json-viewer">
+                            <!-- JSON Tree -->
+                        </div>
+
+                        <h3 style="font-size:0.9rem; margin-top: 1rem; color:#666;">Console Output</h3>
+                        <div id="console-log" class="log-panel" style="height:100px;">
+                            <!-- Logs -->
+                        </div>
+
+                        <hr style="margin: 1rem 0; border: none; border-top: 1px solid #eee;">
+
+                        <!-- Data Object Name Input -->
+                        <div style="margin-bottom: 1rem;">
+                            <label style="font-size: 0.85rem; color: #666; display: block; margin-bottom: 5px;">Data
+                                Object
+                                Name</label>
+                            <div style="display: flex; gap: 8px;">
+                                <input type="text" id="data-object-name" value="digitalData"
+                                    placeholder="e.g. ccsData, digitalData"
+                                    style="flex: 1; padding: 6px 10px; border: 1px solid #ccc; border-radius: 4px; font-family: Consolas, monospace; font-size: 0.85rem;">
+                                <button class="action-btn secondary" onclick="app.applyDataObjectName()"
+                                    style="white-space: nowrap;">Apply</button>
+                            </div>
+                        </div>
+
+                        <!-- Controls Row -->
+                        <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                            <button class="action-btn secondary" onclick="app.openSchemaEditor()">✏️ Edit
+                                Schema</button>
+                            <label
+                                style="display: flex; align-items: center; gap: 5px; font-size: 0.85rem; cursor: pointer;">
+                                <input type="checkbox" id="adobe-toggle" onchange="app.toggleAdobeMode(this.checked)">
+                                <span>Use Real Adobe Launch</span>
+                            </label>
+                        </div>
                     </div>
-                    <button class="action-btn" style="margin-top:5px;" onclick="app.handlers.doSetPageMeta()">Set Page
-                        Metadata</button>
-                </div>
-            </div>
-        </div>
-        </div>
-
-        <!-- Right Column: Visualizer -->
-        <section class="sticky-panel">
-            <!-- Adobe Event Log -->
-            <div class="card" style="margin-bottom:1rem; border: 1px solid #712cf9;">
-                <h3 style="font-size: 1rem; color: var(--event-purple); margin-top:0;">Adobe Launch Monitor</h3>
-                <div id="event-log" class="log-panel" style="height: 150px; background: #1a1a1a;">
-                    <!-- Events appear here -->
-                </div>
-            </div>
-
-            <div class="card visualizer-panel">
-                <h2 style="font-size:1.1rem; margin-bottom:0.5rem;">State (<span
-                        id="data-object-label">window.digitalData</span>)</h2>
-                <div id="json-view" class="json-viewer">
-                    <!-- JSON Tree -->
-                </div>
-
-                <h3 style="font-size:0.9rem; margin-top: 1rem; color:#666;">Console Output</h3>
-                <div id="console-log" class="log-panel" style="height:100px;">
-                    <!-- Logs -->
-                </div>
-
-                <hr style="margin: 1rem 0; border: none; border-top: 1px solid #eee;">
-
-                <!-- Data Object Name Input -->
-                <div style="margin-bottom: 1rem;">
-                    <label style="font-size: 0.85rem; color: #666; display: block; margin-bottom: 5px;">Data Object
-                        Name</label>
-                    <div style="display: flex; gap: 8px;">
-                        <input type="text" id="data-object-name" value="digitalData"
-                            placeholder="e.g. ccsData, digitalData"
-                            style="flex: 1; padding: 6px 10px; border: 1px solid #ccc; border-radius: 4px; font-family: Consolas, monospace; font-size: 0.85rem;">
-                        <button class="action-btn secondary" onclick="app.applyDataObjectName()"
-                            style="white-space: nowrap;">Apply</button>
-                    </div>
-                </div>
-
-                <!-- Controls Row -->
-                <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-                    <button class="action-btn secondary" onclick="app.openSchemaEditor()">✏️ Edit Schema</button>
-                    <label style="display: flex; align-items: center; gap: 5px; font-size: 0.85rem; cursor: pointer;">
-                        <input type="checkbox" id="adobe-toggle" onchange="app.toggleAdobeMode(this.checked)">
-                        <span>Use Real Adobe Launch</span>
-                    </label>
-                </div>
-            </div>
-        </section>
+                </section>
     </main>
 
     <!-- Schema Editor Modal -->

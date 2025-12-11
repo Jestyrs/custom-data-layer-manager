@@ -181,6 +181,44 @@ const app = {
         if (!dl) { app.log('[Error] Data layer not found.', 'error'); return; }
 
         switch (type) {
+            case 'login':
+                dl.set('user.authenticated', true);
+                dl.set('user.person_id', '773822100');
+                dl.set('user.ruid', 'RUID_882910');
+                dl.set('user.session_start', new Date().toISOString());
+                dl.setKPI('login_success');
+                dl.setTouchpoint('member_portal');
+                app.log('[Flow] Login -> Set Authenticated, RUID, PersonID', 'log');
+
+                // UI feedback
+                document.getElementById('btn-login').innerHTML = '✅ Logged In';
+                document.getElementById('btn-login').style.background = '#d4edda';
+                break;
+
+            case 'view-id-card':
+                // Check if logged in in real scenario, but for demo just set data
+                dl.set('user.group_number', '982731');
+                dl.set('user.group_name', 'Blue Cross NC Group');
+                dl.set('user.lob_plan_code', 'B772');
+                dl.set('user.policy_active', true);
+                dl.set('user.aso', false);
+                dl.set('user.custom_network', true);
+
+                // Asset for plan name
+                dl.setAssets('user', { plan_name: 'Blue Advantage Gold' });
+
+                dl.setKPI('view_id_card');
+                dl.setTouchpoint('id_card_view');
+
+                // Toggle UI
+                const idCard = document.getElementById('id-card-display');
+                if (idCard) {
+                    idCard.style.display = 'block';
+                    document.getElementById('id-plan-name').textContent = 'Blue Advantage Gold';
+                }
+                app.log('[Flow] View ID Card -> Plan Details Set', 'log');
+                break;
+
             case 'pay-bill':
                 // Simulate flow: Nav to billing, set touchpoint
                 dl.setView('billing-center');
@@ -192,6 +230,7 @@ const app = {
             case 'find-doc':
                 dl.setView('provider-search');
                 dl.setTouchpoint('care_access');
+                app.switchTab('pubweb'); // Help user get there
                 break;
 
             case 'view-claims':
@@ -201,34 +240,18 @@ const app = {
 
             case 'update-profile':
                 const email = document.getElementById('dash-email').value;
-                const group = document.getElementById('dash-group') ? document.getElementById('dash-group').value : '';
-                const plan = document.getElementById('dash-plan') ? document.getElementById('dash-plan').value : '';
-                const age = document.getElementById('dash-age') ? document.getElementById('dash-age').value : '';
-                const gender = document.getElementById('dash-gender') ? document.getElementById('dash-gender').value : '';
+                const phone = document.getElementById('dash-phone').value;
+                const age = document.getElementById('dash-age').value;
+                const gender = document.getElementById('dash-gender').value;
 
-                // Get checkboxes
-                const cbAuth = document.getElementById('user-auth');
-                const cbActive = document.getElementById('user-active');
-                const cbAso = document.getElementById('user-aso');
-                const cbCustom = document.getElementById('user-custom');
-
-                if (!email && !group && !plan) return;
-
-                // Set User Data
-                if (email) dl.set('user.person_id', email); // Using person_id
-                if (group) dl.set('user.group_number', group);
-                if (plan) dl.set('user.lob_plan_code', plan);
+                if (email) dl.set('user.email', email);
+                if (phone) dl.set('user.phone', phone);
                 if (age) dl.set('user.age', age);
                 if (gender) dl.set('user.gender', gender);
 
-                // Set Booleans
-                if (cbAuth) dl.set('user.authenticated', cbAuth.checked);
-                if (cbActive) dl.set('user.policy_active', cbActive.checked);
-                if (cbAso) dl.set('user.aso', cbAso.checked);
-                if (cbCustom) dl.set('user.custom_network', cbCustom.checked);
-
+                dl.setKPI('profile_update');
                 dl.setTouchpoint('account_mgmt');
-                app.log(`[Flow] Profile Updated -> Captured Extended User Data`, 'log');
+                app.log(`[Flow] Profile Updated -> Captured User Data`, 'log');
                 break;
 
             case 'save-prefs':
@@ -316,14 +339,26 @@ const app = {
         if (dl) dl.clearTouchpoint();
     },
 
-    submitQuote: function () {
+    submitQuote: function (isError) {
         this.closeQuoteModal();
         const dl = this.getDataLayer();
-        if (dl) {
+        if (!dl) return;
+
+        dl.set('form.name', 'quote_request');
+        dl.set('form.step', 'initiation');
+
+        if (isError) {
+            dl.set('form.error_message', 'Invalid Zip Code or Service Unavailable');
+            dl.setKPI('quote_error');
+            app.log('[App] Quote Failed (Simulated)', 'error');
+        } else {
+            const zip = document.getElementById('quote-zip') ? document.getElementById('quote-zip').value : '27701';
+            dl.setAssets('form', { zip_code: zip });
+
             dl.setKPI('start_quote');
             dl.setView('pubweb:quote_results');
+            app.log('[App] Quote Started', 'event');
         }
-        app.log('[App] Quote Started', 'event');
     },
 
     performSearch: function () {
@@ -346,10 +381,12 @@ const app = {
         const dl = this.getDataLayer();
         if (dl) {
             dl.set('search.term', term);
-            dl.set('search.result_count', results.length); // Fixed typo in previous schema (results_count vs result_count)
+            dl.set('search.result_count', results.length);
             if (cat) dl.set('search.category', cat);
             if (filter) dl.set('search.filter', filter);
+
             dl.setKPI('search_executed');
+            dl.setTouchpoint('find_care_search');
         }
         app.log(`[Search] Term: "${term}", Cat: "${cat}", Filter: "${filter}"`, 'event');
 
@@ -425,6 +462,29 @@ const app = {
     },
 
     // Helpers
+    simulateExternalLink: function (type) {
+        if (type === 'campaign') {
+            // Simulate landing with params
+            const dl = app.getDataLayer();
+            if (dl) {
+                dl.set('page.campaign_code', 'SUMMER_SALE_2025');
+                dl.setKPI('campaign_landing');
+                dl.setView('marketing:landing_page');
+            }
+            app.log('[Simulate] External traffic: Email Campaign -> SUMMER_SALE_2025', 'event');
+        } else if (type === '404') {
+            // Simulate error page
+            const dl = app.getDataLayer();
+            if (dl) {
+                dl.set('page.error_page', true);
+                dl.setKPI('error_404');
+                dl.setView('error:404');
+                dl.set('page.view_name', 'error:404'); // explicit override
+            }
+            app.log('[Simulate] External traffic: Broken Link -> 404 Error', 'event');
+        }
+    },
+
     log: function (msg, type = 'log') {
         const panel = (type === 'event') ? document.getElementById('event-log') : document.getElementById('console-log');
         if (!panel) return;
