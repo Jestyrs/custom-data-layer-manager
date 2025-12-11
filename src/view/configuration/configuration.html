@@ -1,15 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Data Layer Configuration</title>
 
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/iconoir-icons/iconoir@main/css/iconoir.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/androidstudio.min.css">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/androidstudio.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
     <style>
         .method-details {
             border: 1px solid #ddd;
@@ -28,9 +31,9 @@
             outline: none;
         }
 
-            .method-summary:hover {
-                background-color: #e9e9e9;
-            }
+        .method-summary:hover {
+            background-color: #e9e9e9;
+        }
 
         .method-content {
             padding: 0 15px 15px 15px;
@@ -54,7 +57,8 @@
     <div class="panel">
         <p class="extension_header extra_bottom_margin">
             <b class="panel_heading">Configuration</b><br />
-            To setup your XDM development bridge we need a few pieces of information. For more information on how to utilize the extension, you can visit this page.
+            To setup your XDM development bridge we need a few pieces of information. For more information on how to
+            utilize the extension, you can visit this page.
         </p>
         <div class="sub_panel extra_bottom_margin">
             <div class="sub_panel_header">Data Object Name</div>
@@ -78,7 +82,8 @@
             <div class="sub_panel_header">Edit Schema</div>
             <div class="sub_panel_setting">
                 <div class="sub_panel_help extra_bottom_margin">
-                    Define the allowed data structure of your data object. This schema applies to the data inside your Tenant Property.
+                    Define the allowed data structure of your data object. This schema applies to the data inside your
+                    Tenant Property.
                     <button style="float: right" class="env_button" id="editSchemaButton">Edit Schema</button>
                 </div>
             </div>
@@ -87,26 +92,44 @@
             <div class="sub_panel_header">Public Methods</div>
             <div class="sub_panel_setting">
                 <div class="sub_panel_help extra_bottom_margin">
-                    <p class="sub_panel_method_help" style="padding-bottom: 10px;">Note: All paths are relative to your configured **Tenant Property Name**.</p>
+                    <p class="sub_panel_method_help" style="padding-bottom: 10px;">Note: All paths are relative to your
+                        configured **Tenant Property Name**.</p>
 
                     <div class="sub_panel_method">.get(path)</div>
-                    <p class="sub_panel_method_help">This method retrieves a single value from the data layer's state using dot-notation.</p>
+                    <p class="sub_panel_method_help">This method retrieves a single value from the data layer's state
+                        using dot-notation.</p>
                     <pre><code class="language-javascript">window.ccsData.get('user.authenticated');</code></pre>
 
                     <div class="sub_panel_method">.set(path, value)</div>
-                    <p class="sub_panel_method_help">Sets a value at a specific path in the data layer. Requires the path and value type to be defined in the schema.</p>
+                    <p class="sub_panel_method_help">Sets a value at a specific path in the data layer. Requires the
+                        path and value type to be defined in the schema.</p>
                     <pre><code class="language-javascript">window.ccsData.set('user.lob_plan_code', 'ABC-123');</code></pre>
 
                     <div class="sub_panel_method">.setView(viewName)</div>
-                    <p class="sub_panel_method_help">An alias for <code>setPageName</code>. This method sets the value of <code>page.name</code>.</p>
+                    <p class="sub_panel_method_help">An alias for <code>setPageName</code>. This method sets the value
+                        of <code>page.name</code>.</p>
                     <pre><code class="language-javascript">window.ccsData.setView('Product Details');</code></pre>
 
+                    <div class="sub_panel_method">.setKPI(kpiName)</div>
+                    <p class="sub_panel_method_help">Sets functionality for <code>application.kpi</code>.</p>
+                    <pre><code class="language-javascript">window.ccsData.setKPI('purchase_complete');</code></pre>
+
+                    <div class="sub_panel_method">.setTouchpoint(touchpointName)</div>
+                    <p class="sub_panel_method_help">Sets functionality for <code>application.touchpoint</code>.</p>
+                    <pre><code class="language-javascript">window.ccsData.setTouchpoint('checkout_flow');</code></pre>
+
+                    <div class="sub_panel_method">.clearTouchpoint()</div>
+                    <p class="sub_panel_method_help">Clears the <code>application.touchpoint</code> value.</p>
+                    <pre><code class="language-javascript">window.ccsData.clearTouchpoint();</code></pre>
+
                     <div class="sub_panel_method">.setAssets(path, assetsList)</div>
-                    <p class="sub_panel_method_help">Adds or updates assets within an `assets` array using a "list of pairs" format.</p>
+                    <p class="sub_panel_method_help">Adds or updates assets within an `assets` array using a "list of
+                        pairs" format.</p>
                     <pre><code class="language-javascript">window.ccsData.setAssets('application', [['site', 'pubweb']]);</code></pre>
 
                     <div class="sub_panel_method" style="margin-top: 20px;">.merge(object, [path])</div>
-                    <p class="sub_panel_method_help">Merges an object into the data layer. If the optional <code>path</code> string is provided, the merge happens at that specific location.</p>
+                    <p class="sub_panel_method_help">Merges an object into the data layer. If the optional
+                        <code>path</code> string is provided, the merge happens at that specific location.</p>
                     <pre><code class="language-javascript">window.ccsData.merge({
   form: { name: 'request-a-quote' },
   user: { ruid: 'some-random-user-id' }
@@ -114,12 +137,15 @@
 
                     <div class="sub_panel_method_subsection">
                         <div class="sub_panel_method" style="font-size: 11pt;">Merge Shortcuts</div>
-                        <p class="sub_panel_method_help" style="margin-bottom: 15px;">The following methods are shortcuts for calling <code>.merge(object, path)</code> on specific top-level properties.</p>
+                        <p class="sub_panel_method_help" style="margin-bottom: 15px;">The following methods are
+                            shortcuts for calling <code>.merge(object, path)</code> on specific top-level properties.
+                        </p>
 
                         <details class="method-details">
                             <summary class="method-summary">.setApplication(object)</summary>
                             <div class="method-content">
-                                <p class="sub_panel_method_help">Merges an object into the <code>application</code> property.</p>
+                                <p class="sub_panel_method_help">Merges an object into the <code>application</code>
+                                    property.</p>
                                 <pre><code class="language-javascript">window.ccsData.setApplication({
   name: 'CustomerPortal',
   platform: 'desktop'
@@ -130,7 +156,8 @@
                         <details class="method-details">
                             <summary class="method-summary">.setEvent(object)</summary>
                             <div class="method-content">
-                                <p class="sub_panel_method_help">Merges an object into the <code>event</code> property.</p>
+                                <p class="sub_panel_method_help">Merges an object into the <code>event</code> property.
+                                </p>
                                 <pre><code class="language-javascript">window.ccsData.setEvent({
   action: 'formStart'
 });</code></pre>
@@ -140,7 +167,8 @@
                         <details class="method-details">
                             <summary class="method-summary">.setForm(object)</summary>
                             <div class="method-content">
-                                <p class="sub_panel_method_help">Merges an object into the <code>form</code> property.</p>
+                                <p class="sub_panel_method_help">Merges an object into the <code>form</code> property.
+                                </p>
                                 <pre><code class="language-javascript">window.ccsData.setForm({
   name: 'newsletterSignup',
   source: 'footer-promo'
@@ -151,7 +179,8 @@
                         <details class="method-details">
                             <summary class="method-summary">.setPage(object)</summary>
                             <div class="method-content">
-                                <p class="sub_panel_method_help">Merges an object into the <code>page</code> property.</p>
+                                <p class="sub_panel_method_help">Merges an object into the <code>page</code> property.
+                                </p>
                                 <pre><code class="language-javascript">window.ccsData.setPage({
   error_page: false,
   views: 3
@@ -162,7 +191,8 @@
                         <details class="method-details">
                             <summary class="method-summary">.setUser(object)</summary>
                             <div class="method-content">
-                                <p class="sub_panel_method_help">Merges an object into the <code>user</code> property.</p>
+                                <p class="sub_panel_method_help">Merges an object into the <code>user</code> property.
+                                </p>
                                 <pre><code class="language-javascript">window.ccsData.setUser({
   authenticated: true,
   gender: 'female'
@@ -173,7 +203,8 @@
                         <details class="method-details">
                             <summary class="method-summary">.setSearch(object)</summary>
                             <div class="method-content">
-                                <p class="sub_panel_method_help">Merges an object into the <code>search</code> property.</p>
+                                <p class="sub_panel_method_help">Merges an object into the <code>search</code> property.
+                                </p>
                                 <pre><code class="language-javascript">window.ccsData.setSearch({
   term: 'data layer',
   result_count: 15
@@ -189,10 +220,12 @@
             <div class="sub_panel_setting">
                 <div class="sub_panel_help extra_bottom_margin">
                     <div class="sub_panel_method">._getState()</div>
-                    <p class="sub_panel_method_help">Returns a complete copy of the entire data layer in it's current populated state.</p>
+                    <p class="sub_panel_method_help">Returns a complete copy of the entire data layer in it's current
+                        populated state.</p>
                     <pre><code class="language-javascript">window.ccsData._getState();</code></pre>
                     <div class="sub_panel_method">._getSchema()</div>
-                    <p class="sub_panel_method_help">Returns a copy of the JSON schema that the extension is using for validation.</p>
+                    <p class="sub_panel_method_help">Returns a copy of the JSON schema that the extension is using for
+                        validation.</p>
                     <pre><code class="language-javascript">window.cssData._getSchema();</code></pre>
                 </div>
             </div>
@@ -267,4 +300,5 @@
         }
     </script>
 </body>
+
 </html>
