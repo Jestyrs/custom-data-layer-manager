@@ -410,6 +410,10 @@
     </div>
 
     <script>
+        // Always load mock-environment.js to provide visualization and wrapper helpers
+        // (It safely checks mode internally to avoid overwriting mocks in real mode)
+        document.write('<script src="mock-environment.js"><\/script>');
+
         // Determine mode BEFORE loading other scripts
         const useRealAdobe = localStorage.getItem('useRealAdobe') === 'true';
 
@@ -438,9 +442,7 @@
             document.write('<script src="app.js"><\/script>');
         }
 
-        // Always load mock-environment.js to provide visualization and wrapper helpers
-        // (It safely checks mode internally to avoid overwriting mocks in real mode)
-        document.write('<script src="mock-environment.js"><\/script>');
+
     </script>
 
 </body>
