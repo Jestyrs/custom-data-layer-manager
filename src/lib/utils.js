@@ -133,6 +133,10 @@ function validateTypeBySchema(value, schemaProperty) {
     const expectedType = schemaProperty.type;
     const actualType = getTypeName(value);
 
+    if (expectedType === 'integer') {
+        return Number.isInteger(value);
+    }
+
     return expectedType === actualType;
 }
 
